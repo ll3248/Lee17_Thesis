@@ -1,0 +1,15 @@
+---
+title: "An Introduction to Networks"
+author: "Levi Lee"
+date: November 16, 2016
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---

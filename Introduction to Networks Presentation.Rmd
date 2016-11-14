@@ -1,0 +1,132 @@
+---
+title: "An Introduction to Networks"
+author: "Levi Lee"
+date: November 16, 2016
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, include=FALSE}
+#output:
+#  beamer_presentation:
+#    theme: "Boadilla"
+#    colortheme: "beaver"
+#    fonttheme: "structurebold"
+
+library(gridExtra)
+library(sand)
+library(igraph)
+library(combinat)
+```
+
+# What is a Network? 
+
+A collection of nodes and edges 
+
+Can display multiple layers of data 
+
+```{r}
+data(karate)
+plot(karate)
+vcount(karate) #34 people
+ecount(karate) #78 friednships
+
+average.path.length(karate) #2.4082
+diameter(karate) #13
+transitivity(karate) #0.2556818 clustering coefficent
+
+```
+
+# Erdos-Reni 
+
+```{r}
+set.seed(490)
+
+numsim <- 100 
+
+g.er.karmod.coef <- rep(NA, numsim)
+g.er.karmod.apl <- rep(NA, numsim)
+g.er.karmod.dia <- rep(NA, numsim)
+
+for (i in 1:numsim) {
+  # n = number of vertices, p = probability of a link
+  #p is caluclated as number of edges over number of possible esages choose 2
+  g.er.karmod <- erdos.renyi.game(n = vcount(karate), 
+                                  p = (ecount(karate)/choose(ecount(karate), 2)))
+  g.er.karmod.coef[i] <- transitivity(g.er.karmod)
+  g.er.karmod.apl[i] <- average.path.length(g.er.karmod)
+  g.er.karmod.dia[i] <- diameter(g.er.karmod)
+}
+
+#par(mfrow=c(1,3))
+hist(g.er.karmod.coef)
+abline(v = transitivity(karate), col="red")
+
+hist(g.er.karmod.apl)
+abline(v = average.path.length(karate), col="red")
+
+hist(g.er.karmod.dia)
+abline(v = diameter(karate), col="red")
+```
+
+# Watts Strogatz
+
+```{r}
+g.ws.karmod.coef <- rep(NA, numsim)
+g.ws.karmod.apl <- rep(NA, numsim)
+g.ws.karmod.dia <- rep(NA, numsim)
+
+for (i in 1:numsim) {
+  g.ws.karmod <- erdos.renyi.game(dim = 1, 
+                                  n = vcount(karate), 
+                                  nei = 0, 
+                                  p = (ecount(karate)/choose(ecount(karate), 2)))
+  g.ws.karmod.coef[i] <- transitivity(g.ws.karmod)
+  g.ws.karmod.apl[i] <- average.path.length(g.ws.karmod)
+  g.ws.karmod.dia[i] <- diameter(g.ws.karmod)
+}
+
+#par(mfrow=c(1,3))
+hist(g.ws.karmod.coef)
+abline(v = transitivity(karate), col="red")
+
+hist(g.ws.karmod.apl)
+abline(v = average.path.length(karate), col="red")
+
+hist(g.ws.karmod.dia)
+abline(v = diameter(karate), col="red")
+```
+
+# Babarasi Albert 
+
+```{r}
+g.ba.karmod.coef <- rep(NA, numsim)
+g.ba.karmod.apl <- rep(NA, numsim)
+g.ba.karmod.dia <- rep(NA, numsim)
+
+for (i in 1:numsim) {
+  g.ba.karmod <- barabasi.game(100, directed=FALSE)
+  g.ba.karmod.coef[i] <- transitivity(g.ba.karmod)
+  g.ba.karmod.apl[i] <- average.path.length(g.ba.karmod)
+  g.ba.karmod.dia[i] <- diameter(g.ba.karmod)
+}
+
+#par(mfrow=c(1,3))
+hist(g.ba.karmod.coef)
+abline(v = transitivity(karate), col="red")
+
+hist(g.ba.karmod.apl)
+abline(v = average.path.length(karate), col="red")
+
+hist(g.ba.karmod.dia)
+abline(v = diameter(karate), col="red")
+```
+
