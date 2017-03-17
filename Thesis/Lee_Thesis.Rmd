@@ -1,6 +1,6 @@
 ---
 author: 'Levi Lee'
-date: 'Feburary 27, 2017'
+date: 'April 03, 2017'
 division: 'Statistics'
 advisor: 'Amy Wagaman'
 department: 'Mathematics and Statistics'

@@ -24,18 +24,14 @@ library(network)
 library(sna)
 library(statnet)
 library(ergm)
+library(intergraph)
 
 ### FACEBOOK
 
+setwd("~/Lee17Thesis/Thesis/data")
 # this is an edge list
-setwd("~/STAT495-Lee/StatComps2017-02 /data")
 facebookcombined <- read.table(gzfile("facebook_combined.txt.gz"), header=F)
 
-# characteristics of the Facebook component
-nrow(facebookcombined) #88234 edges
-length(unique(c(facebookcombined$V2, facebookcombined$V1))) #4039 nodes
-no.clusters(fbel) #1 cluster
-sum(count_triangles(fbel))/3 #1612010 unique triangles (up to ordering)
 
 # creating `igraph` object
 fbel <- graph.data.frame(facebookcombined)
@@ -43,6 +39,12 @@ fbel <- graph.data.frame(facebookcombined)
 # creating `network` object
 A_fb <- get.adjacency(fbel, sparse = FALSE)
 fbg <- network::as.network.matrix(A_fb)
+
+# characteristics of the Facebook component
+nrow(facebookcombined) #88234 edges
+length(unique(c(facebookcombined$V2, facebookcombined$V1))) #4039 nodes
+no.clusters(fbel) #1 cluster
+sum(count_triangles(fbel))/3 #1612010 unique triangles (up to ordering)
 
 # some network statisitcs
 transitivity(fbel, type="localaverage")  #0.6170038
@@ -56,6 +58,134 @@ mean(igraph::closeness(fbel)) #8.881448e-08
 mean(igraph::eigen_centrality(fbel)$vector) #0.04047316
 
 ### Modeling the Facebook Network 
+
+
+#### ERGMs
+
+# needs an object of class network
+# uses `fbg` object
+
+# this should be the same as Erdos-Renyi
+# one paramter: edges
+g.ergm1.fbg <- ergm(fbg ~ edges)
+summary(g.ergm1.fbg)
+
+# set the seed for reproducible analysis 
+set.seed(499)
+# network list
+numsim = 5
+g.ergm1.fbg.sim <- simulate(g.ergm1.fbg, nsim = numsim)
+
+g.ergm1.fbg.sim.ecount <- rep(NA, numsim)
+g.ergm1.fbg.sim.coef <- rep(NA, numsim)
+g.ergm1.fbg.sim.apl <- rep(NA, numsim)
+g.ergm1.fbg.sim.dia <- rep(NA, numsim)
+g.ergm1.fbg.sim.avgdeg <- rep(NA, numsim)
+g.ergm1.fbg.sim.avgbtwcen <- rep(NA, numsim)
+g.ergm1.fbg.sim.avgclocen <- rep(NA, numsim)
+g.ergm1.fbg.sim.avgeigveccen <- rep(NA, numsim)
+
+
+for (i in 1:numsim) {
+  #convert to igraph object
+  g.ergm1.fbg.sim.convert <- asIgraph(g.ergm1.fbg.sim[[i]])
+  
+  #observe the network statistics for this simulated graph
+  g.ergm1.fbg.sim.ecount[i] <- ecount(g.ergm1.fbg.sim.convert)
+  g.ergm1.fbg.sim.coef[i] <- transitivity(g.ergm1.fbg.sim.convert, type="localaverage")
+  g.ergm1.fbg.sim.apl[i] <- average.path.length(g.ergm1.fbg.sim.convert)
+  g.ergm1.fbg.sim.dia[i] <- diameter(g.ergm1.fbg.sim.convert)
+  g.ergm1.fbg.sim.avgdeg[i] <- mean(igraph::degree(g.ergm1.fbg.sim.convert))
+  g.ergm1.fbg.sim.avgbtwcen[i] <- mean(igraph::betweenness(g.ergm1.fbg.sim.convert))
+  g.ergm1.fbg.sim.avgclocen[i] <- mean(igraph::closeness(g.ergm1.fbg.sim.convert))
+  g.ergm1.fbg.sim.avgeigveccen[i] <- mean(igraph::eigen_centrality(g.ergm1.fbg.sim.convert)$vector)
+}
+
+g.ergm1.fbg.sim.df <- as.data.frame(cbind(g.ergm1.fbg.sim.ecount, g.ergm1.fbg.sim.coef, 
+                                          g.ergm1.fbg.sim.apl, g.ergm1.fbg.sim.dia, 
+                                          g.ergm1.fbg.sim.avgdeg, g.ergm1.fbg.sim.avgbtwcen, 
+                                          g.ergm1.fbg.sim.avgclocen, g.ergm1.fbg.sim.avgeigveccen))
+
+# store all the data in the folder below
+# setwd("~/Lee17Thesis/Thesis/data")
+
+# save the data frame for furture use
+# save(g.ergm1.fbg.sim.df,file="g.ergm1.fbg.sim.Rda")
+
+# load the data frame for future use
+# load("g.ergm1.fbg.sim.Rda")
+
+# attach previously saved data frame
+# attach(g.ergm1.fbg.sim)
+
+# do not forget to detach data frame below
+
+# average network statistics using Watts-Strogatz model
+
+mean(g.ergm1.fbg.sim.coef) #
+sd(g.ergm1.fbg.sim.coef) #
+
+mean(g.ergm1.fbg.sim.apl) #
+sd(g.ergm1.fbg.sim.apl) #
+
+mean(g.ergm1.fbg.sim.dia) #
+
+mean(g.ergm1.fbg.sim.avgdeg) #
+sd(g.ws.fbel.avgdeg) #
+
+mean(g.ergm1.fbg.sim.avgbtwcen) #
+sd(g.ergm1.fbg.sim.avgbtwcen) #
+
+mean(g.ergm1.fbg.sim.avgclocen) #
+sd(g.ergm1.fbg.sim.avgclocen) #
+
+mean(g.ergm1.fbg.sim.avgeigveccen) #
+sd(g.ergm1.fbg.sim.avgeigveccen) #
+
+# detach previously saved data frame
+# detach(g.ergm1.fbg.sim)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# two parameters: edges and triangles 
+g.ergm2.fbg <- ergm(fbg ~ edges+triangle)
+
+# set the seed for reproducible analysis 
+set.seed(499)
+g.ergm2.fbg.sim <- simulate(g.ergm2.fbg, numsim=1000)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #### Erdős-Rényi(-Gilbert)
 
@@ -101,7 +231,7 @@ g.er.fbel <- as.data.frame(cbind(g.er.fbel.ecount, g.er.fbel.coef,
                                  g.er.fbel.avgclocen, g.er.fbel.avgeigveccen))
 
 # store all the data in the folder below
-# setwd("~/STAT495-Lee/StatComps2017-02 /data")
+# setwd("~/Lee17Thesis/Thesis/data")
 
 # save the data frame for furture use
 # save(g.er.fbel,file="g.er.fbel.Rda")
@@ -189,7 +319,7 @@ g.ws.fbel <- as.data.frame(cbind(g.ws.fbel.ecount, g.ws.fbel.coef,
                                  g.ws.fbel.avgclocen, g.ws.fbel.avgeigveccen))
 
 # store all the data in the folder below
-# setwd("~/STAT495-Lee/StatComps2017-02 /data")
+# setwd("~/Lee17Thesis/Thesis/data")
 
 # save the data frame for furture use
 # save(g.ws.fbel,file="g.ws.fbel.Rda")
@@ -228,22 +358,3 @@ sd(g.ws.fbel.avgeigveccen) #0.02269783
 # detach previously saved data frame
 # detach(g.ws.fbel)
 
-#### ERGMs
-
-# needs an object of class network
-# uses `fbg` object
-
-# this should be the same as Erdos-Renyi
-# one paramter: edges
-g.ergm1.fbg <- ergm(fbg ~ edges)
-
-# set the seed for reproducible analysis 
-set.seed(499)
-g.ergm1.fbg.sim <- simulate(g.ergm1.fbg, numsim=1000)
-
-# two parameters: edges and triangles 
-g.ergm2.fbg <- ergm(fbg ~ edges+triangle)
-
-# set the seed for reproducible analysis 
-set.seed(499)
-g.ergm2.fbg.sim <- simulate(g.ergm2.fbg, numsim=1000)
