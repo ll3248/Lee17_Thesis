@@ -92,14 +92,6 @@ plot(lazega, layout=l, vertex.color=v.colors,
 ```
 ![Lazega's Law Firm ($N_V = 36$, $N_E = 115$)](figure/02lawyerplot.png) 
 
-```{r results = "asis"}
-setwd("~/STAT495-Lee/StatComps2017-02")
-label(path = "
-      /amherst.png", 
-      caption = "Amherst logo", 
-      label = "amherst", type = "figure")
-```
-
 We can also continue adding layers of data to this visual as well. For example, if the appropriate data was recorded, it is possible quantify and/or qualify the collaborations between the lawyers. We can apply weights to give an idea of how frequently any pair of lawyers interacted with each other in this resource exchange; we can even apply line types (solid, dashed, double-dashed, etc.) to indicate how this collaboration took place: was it done in person, through the phone, through email, or some combination of the three? 
 
 ## Modeling Real-World Networks
