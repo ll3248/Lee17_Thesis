@@ -1,0 +1,16 @@
+base
+devtools
+acstats
+gridExtra
+igraph
+igraphdata
+sand
+combinat
+dplyr
+lattice
+ggplot2
+mosaicData
+Matrix
+mosaic
+mdsr
+xtable

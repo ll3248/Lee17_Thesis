@@ -1,0 +1,118 @@
+<!--
+The {#rmd-basics} text after the chapter declaration will allow us to link throughout the document back to the beginning of Chapter 1.  These labels will automatically be generated (if not specified) by changing the spaces to hyphens and capital letters to lowercase.  Look for the reference to this label at the beginning of Chapter 2.
+-->
+
+```{r setupch1, include=FALSE}
+library(sand)
+library(igraph)
+library(network)
+library(sna)
+library(statnet)
+library(ergm)
+library(xtable)
+
+options(xtable.comment = FALSE)
+```
+
+# Descriptive Network Statistics 
+
+Descriptive statistics for networks are somewhat analogous to those seen in elementary statistics. In fact, we have seen a few already in the section of basic terminology in our Introduction. We describe a few below and explain them in the context of Zachary's karate club and Lazega's lawy firm. Much of what is explained below follows from @kolaczyk_statistical_2009, @newman_networks:_2010 and @igraphpackage. Please refer to these texts for more information. 
+
+```{r exampledatach1, eval=TRUE, echo=FALSE, include = FALSE}
+data(karate)
+data(lazega)
+```
+
+## Transitivity 
+
+*Transitivity*, otherwise known as the *clustering coefficient*, is the probability that adjacent vertices of a particular vertex are connected. In other words, this value provides a sense of how well-connected the graph is. A higher transitivity implies a graph having many nodes close to each other with links connecting all of them. There are many different ways to calculate transitivity, which largely depends on whether one wishes to talk about the network globally or locally. 
+
+Globally speaking, this value is the ratio of connected triples to all possible triangles in the graph. We define a *triangle* (or *triad*) as subgraphs with three nodes; if these nodes are connected by two edges, it is a *connected triple*. Formulaically, the clustering coefficient, denoted $C$ is  
+
+$$C = \frac {(\text{number of triangles}) \times 3} {\text{number of connected triples}} $$
+
+The factor of $3$ represents the fact that a triangle is counted three times when we consider the number of triples in the network. 
+
+The local transitivity is calculated for each vertex in the graph and is the ratio of triangles connected to a particular vertex to the connected triples centered on the vertex. For a particular vertex $i$, the local transitivity is denoted as
+
+$$ C_{i} = \frac {(\text{number of pairs of neighbors of } i \text{ that are connected})} {(\text{number of pairs of neighbors of } i)} $$
+For our purposes, we will use the local average transitivity, which is the average of the local transitivity values for each node in the graph. 
+
+In Zachary's Karate Club and Lazega's Law Firm, the local average transitivity values are: `r transitivity(karate, type="localaverage")` and `r transitivity(lazega, type="localaverage")`, respectively, and the global transitivity values are  `r transitivity(karate, type="global")` and `r transitivity(lazega, type="global")`, respectively. This means that while the lawyer network has a greater amount of clustering than the karate network overall, locally speaking, there are more nodes in the karate network that form many triangles and connected triples compared to the lawyer network. In fact, as we will see, social networks in general tend to have higher-than-average transitivity values. 
+
+## Average Path Length
+
+As mentioned earlier, *average path length* (or *average geodesic distance*) is the average of the shortest paths of all distinct pairs of nodes in the network. This is a also commonly used statistic among social networks since average path lengths tend to be much less than what we would expect if the edges were placed between nodes randomly. 
+
+The karate network has an average path length of `r average.path.length(karate)` while the lawyer network has an average path length of `r average.path.length(lazega)`. This means that in both cases, any two people in both networks are ever separated by an average of about two people. 
+
+## Diameter
+
+As mentioned earlier as well, the *diameter* of a graph is the longest of all the shortest paths between distinct pairs of nodes. This value gives our graph a notion of distance. Unlike average path length, however, diameter can be unpredictable at times since this value can be an outlier compared to other path lengths in the network. 
+
+The diameters of the karate and lawyer networks are `r diameter(karate)` and `r diameter(lazega)`, respectively. In a law firm of `r vcount(lazega)`, people are only as far as five people away from each other, but for the karate network, even in a group of `r vcount(karate)`, there exists two club members that do not have a direct relationship with each other and are separated by 12 other members. 
+
+## Centrality 
+
+*Centrality* provides a measure of the "importance" to each node in the network. It is similar to the measures of central tendency seen in elementary statistics. Many different types of centrality have been proposed, some of which are discussed below. Here, we assume our graph $G$ is undirected.
+
+*Vertex degree* is perhaps the most common type of centrality. One of the properties of networks is that the degree of the nodes of a graph tend to follow a *power law distribution*. This property indicates that a few nodes with particularly high degrees occur very frequently (compared to if it followed a Poisson distribution, for example). Because of this, nodes with higher vertex degrees are considered to be more central to the network than nodes with lower vertex degrees. 
+
+*Closeness centrality* measures how close a vertex is to other vertices by based on the inverse of the total distance of the vertex from all others. 
+
+$$c_{Cl}(i) = \frac {1} {\sum_{i \in V}^{} d(i, j)}$$
+
+where $dist(i,j)$ is the geodesic distance between the vertices $i,j \in V$. To compare across graphs and with other centrality measures, this measure is often normalized to lie in the interval $[0,1]$ by multiplying by a factor of $N_V - 1$.
+
+*Betweenness centrality* measures are aimed at summarizing the extent to which a vertex is located between other pairs of vertices. The most commonly used version of betweenness centrality is
+
+$$c_{B}(i) = \sum_{g \neq h \neq i \in V}^{} \frac {\sigma(g,h|i)} {\sigma(g,h)}$$,
+
+where $\sigma(g,h|i)$ is the total number of shortest paths between $g$ and $h$ that pass through $i$, and $\sigma(g,h) = \sum_{V}^{} \sigma(g,h|i)$. If the shortest paths are unique, $c_{B}(i)$ just counts the number of shortest paths going through $i$. This normalized by dividing by a factor of $\frac {(N_V - 1)(N_V - 2)} {2}$
+	
+*Eigenvector centrality* is based on the idea of "status," "prestige," or "rank;" the more central the neighbors of a vertex are, the more central that vertex itself is. One definition of such a centrality measure is: 
+
+$$c_{Ei}(i) = \alpha \sum_{\{i,j\} \in E}^{} c_{Ei} (u)$$
+
+The vector $c_{Ei} = (c_{Ei}(1), ..., c_{Ei}(N_V))^T$ is the solution to the eigenvalue problem $\textbf{A}\textbf{c}_{Ei} = \alpha^{-1}\textbf{c}_{Ei}$, where $\textbf{A}$ is the adjacency matrix for network graph $G$.
+
+Centrality measures, like the local average transitivity, provide a value for each vertex in the graph. Because of this, we can obtain an overall centrality measure for the graph as a whole if we average the values for each vertex. 
+
+```{r examplecentrality, eval  =FALSE, echo = FALSE}
+mean(igraph::degree(karate)) 
+#average degree centrality: 4.588235
+mean(igraph::betweenness(karate)) 
+#average betweenness centrality: 26.19363
+mean(igraph::closeness(karate)) 
+#average closeness centrality: 0.005450958
+mean(igraph::eigen_centrality(karate)$vector) 
+#average eigenvector centrality 0.3772814
+
+mean(igraph::degree(lazega)) 
+#average degree centrality: 6.388889
+mean(igraph::betweenness(lazega)) 
+#average betweenness centrality: 17.83333
+mean(igraph::closeness(lazega)) 
+#average closeness centrality: 0.00670515
+mean(igraph::eigen_centrality(lazega)$vector) 
+#average eigenvector centrality 0.4578719
+```
+
+
+-------------------------------------------------------------------------------------------------------
+Network Statistic                  Zachary's Karate Club      Lazega's Law Firm
+---------------------------------- -------------------------- --------------------------
+Average Degree                     4.588                      6.389  
+  
+Average Betweenness Centrality     26.194                     17.833           
+  
+Average Closeness Centrality       0.005                      0.007    
+  
+Average Eigenvector Centrality     0.377                      0.458       
+  
+---------------------------------- -------------------------- --------------------------
+Table: Average centrality measures for the karate and lawyer networks \label{tab:avgcent}
+
+`r ref("avgcent", type = "table")` above shows the average centrality measures for both the karate and lawyer networks. Because each type of centrality is measuring importance of nodes differently, it comes as no surprise that all of the average centrality values within one network will be different from each other. These average values, however, do not give any indication of which nodes in the network are important, or how many. Additionally, the use of an average means that the value can be subjected to some very drastic outliers that could potentially skew its value. 
+
+We will use these seven network statistics listed above in our simulation study. By calculating these values from our observed network, it is possible for us to compare our network with graphs simulated from our graph models. 
