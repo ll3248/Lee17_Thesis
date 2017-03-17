@@ -46,12 +46,11 @@ in which $G$ is a collection or ensemble of possible graphs, $P_\theta$ is a pro
 Many of the explanations and derivations for the Erdős-Rényi and Watts-Strogatz networks here follow from @newman_networks:_2010. The section about exponential random graph models (ERGMs) follow largely from @butts_introduction_2015.
 
 
-At the time of this writing, we are still working on further explanations of the properties of the Erdős-Rényi and Watts-Strogatz models. This will be included as part of the Mathematics thesis.
-
-
 ## Erdős-Rényi 
 
-The Erdős-Rényi (also known as the Erdős-Rényi-Gilbert) model is one of the most studied of the graph models. It is also one of the simplest, as it takes only two parameters. The model $G(N_V, N_E)$, first suggested by @gilbert1959random, takes in $N_V$, the number of nodes, and $N_E$ the number of edges. Erdős and Rényi (1959, 1960, 1964) considered the model of the form $G(N_V, p)$, where instead of using the number of edges, the probability of an edge forming between any pairs of nodes is fixed. Our focus is on the latter model. 
+The *Erdős-Rényi model* (also known as the *Erdős-Rényi-Gilbert model*) is one of the most studied graph models.[^3] It is also one of the simplest, as it takes only two parameters. The model $G(N_V, N_E)$, first suggested by @gilbert1959random, takes in $N_V$, the number of nodes, and $N_E$ the number of edges. Erdős and Rényi (1959, 1960, 1964) considered the model of the form $G(N_{V}, p)$, where instead of using the number of edges, the probability of an edge forming between any pairs of nodes is fixed. Our focus is on the latter model. 
+
+[^2]: Many other names for this model exist, such as *Bernoulli model (random graph)* and the *Poisson random graph* due to characteristics of its degree distribution as explained above. In fact, Erdős and Rényi were not the first to study or discover this model. According to Newman (2010), the earliest known study of this model is by R. Solomonoff and A. Rapoport in 1951. 
 
 ```{r erdosrenyiexample, fig.align = 'center', eval=TRUE, include = FALSE}
 set.seed(499)
@@ -69,6 +68,29 @@ plot(g2.er, vertex.size=20, vertex.label.cex = 0.75)
 ![Examples of graphs generated from the Erdős-Rényi model. Left and Right: $N_V = 10$, $p = 0.25$.](figure/21erdosrenyiexample.png)
 
 In the $G(N_V, p)$ model, graphs constructed according to this model could potentially look every different from each other. This goes back to the idea that a graph model can be thought of as a probability distribution over an ensemble of networks, and all networks in this particular ensemble have equal probability of being chosen. We immediately see a drawback in graphs generated from this model: it places no significance on structures that we may see in our observed graph--such as dense clusters or cliques. 
+
+In spite of this, the Erdős-Rényi model has very nice properties, some of which we discuss here. 
+Even with only two parameters $N_{V}$ and $p$ on hand, we can still create formulas that allow us to calculate various network statistics, such as average degree and clustering coefficient, and describe the model's degree distribution and giant component.
+
+As we have mentioned earlier, $G(N_V, p)$ model is the collection of simple graphs with exactly $n$ vertices, meaning that any simple graph $G$ with exactly $N_V$ vertices has probability 
+
+$$P(G) = p^{N_E}(1 - p)^{{N_V \choose 2} - N_E)}$$
+of being picked. For precisely $N_E$ edges, there are ${{n \choose 2} \choose m}$ ways to arange the $N_{E}$ edges among the ${N_V \choose 2}$ possible edges. Thus, total probability of a random graph $G$ with $N_{E}$ edges and $N_{V}$ vertices is 
+
+$$P(N_E) = {{n \choose 2} \choose m}p^{N_E}(1 - p)^{{N_V \choose 2} - N_E)}$$
+This, however, is simply a binomial distribution, where we have some probability of success ($p$), two possible outcomes (edge formation or no edge formation), a finite number of trials (${N_{V} \choose 2}$ distinct edges), and ${{N_{V} \choose 2} \choose m}$ different ways in which the outcomes can be arranged. Using this, the mean value of $N_E$ for the model is then a weighted average. It is the sum of the products of every possible number of edges $N_E$ and the total probability that a graph with $N_{V}$ vertices and N_{E} edges appears, $P(N_{E})$. However, because we know the probability of an edge forming, the mean number of edges would eqaul to the product of the total number of possible vertices ${N_{V} \choose 2}$ and the probability $p$. This makes sense as we can expect that $100p$ percent of the possible edges in the graph to actually have edges. Thus, 
+
+$$ \langle N_{E} \rangle = \sum_{N_{E}=0}^{{n \choose 2}} N_{E}P(N_{E}) = {n \choose 2}p$$
+
+For a graph with exactly $N_{E}$ edges, it is easy to see that the mean degree is $\frac {2N_{E}} {N_{V}}$. The factor of $2$ allows an edge to be counted as part of the degree for each of the pair vertices that it connects. By taking a similar weighted average, where we sum the products of the average degree of a graph with $N_E$ edges with the total probability of a graph with $N_E$ edges being chosen, we can get the average degree, denoted $c$,  for this model. Using the formula for the mean number of edges above, we can simplify this weighted average
+
+$$c = \langle N_{V} \rangle = \sum_{N_{E}=0}^{{n \choose 2}} \frac {2N_{E}} {N_{V}} P(N_{E}) = \frac {2} {N_{V}} {N_{V} \choose 2}p = (N_{V} - 1)p$$
+The right-hand side of this equation makes sense; for any vertex on the random graph, we would expect $100p$ percent of the other $N_{V} - 1$ vertices to be connected to it. 
+
+We can also describe the distribution of the $G(N_V, p)$. We show it is a binomial distribution, and that it actually converges to the Poisson distribution as the number of vertices {N_V} increases. To see this, observe that the probability $p_k$ of
+
+
+
 
 To use this model in our simulation study, we simply take the number of nodes and the probability of a link forming equal to the number of observed edges divided by the number of possible edges (the number of nodes choose 2). That is, $\frac{N_{E}} {{N_{V} \choose 2}}$.
 
@@ -116,6 +138,4 @@ At the time of this writing, we are still working on the explanation of properti
 
 The Erdős-Rényi-Gilbert and Watts-Strogatz models are actually special cases of ERGMs. Here, we will show that the Erdős-Rényi model can be derived from an ERGM that only takes into acount the number of edges in a graph. 
 
-
-At the time of this writing, we are also still working on this derivation. It will be included as part of the Mathematics thesis. 
 

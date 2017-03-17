@@ -27,7 +27,7 @@ data(lazega)
 
 *Transitivity*, otherwise known as the *clustering coefficient*, is the probability that adjacent vertices of a particular vertex are connected. In other words, this value provides a sense of how well-connected the graph is. A higher transitivity implies a graph having many nodes close to each other with links connecting all of them. There are many different ways to calculate transitivity, which largely depends on whether one wishes to talk about the network globally or locally. 
 
-Globally speaking, this value is the ratio of connected triples to all possible triangles in the graph. We define a *triangle* (or *triad*) as subgraphs with three nodes; if these nodes are connected by two edges, it is a *connected triple*. Formulaically, the clustering coefficient, denoted $C$ is  
+Globally speaking, this value is the ratio of connected triples to all possible triangles in the graph. We define a *triangle* (or *triad*) as subgraphs with three nodes; if these nodes are connected by two edges, it is a *connected triple*. Formulaically, the clustering coefficient, denoted with uppercase $C$,  is  
 
 $$C = \frac {(\text{number of triangles}) \times 3} {\text{number of connected triples}} $$
 
@@ -56,7 +56,7 @@ The diameters of the karate and lawyer networks are `r diameter(karate)` and `r 
 
 *Centrality* provides a measure of the "importance" to each node in the network. It is similar to the measures of central tendency seen in elementary statistics. Many different types of centrality have been proposed, some of which are discussed below. Here, we assume our graph $G$ is undirected.
 
-*Vertex degree* is perhaps the most common type of centrality. One of the properties of networks is that the degree of the nodes of a graph tend to follow a *power law distribution*. This property indicates that a few nodes with particularly high degrees occur very frequently (compared to if it followed a Poisson distribution, for example). Because of this, nodes with higher vertex degrees are considered to be more central to the network than nodes with lower vertex degrees. 
+*Vertex degree* is perhaps the most common type of centrality. It is not surprising that vertices with higher vertex degrees are considered to be more central to the network than those with lower vertex degrees. One of the properties of networks is that the degree of the nodes of a graph tend to follow a *power law distribution*. This property indicates that quite a few nodes with particularly high degrees occur very frequently (compared to if it followed a Poisson distribution, for example). The mean of the vertex degrees of all the vertices of the graph yields the *mean* (or *average*) *degree*, often denoted with lowercase $c$.
 
 *Closeness centrality* measures how close a vertex is to other vertices by based on the inverse of the total distance of the vertex from all others. 
 
@@ -76,7 +76,7 @@ $$c_{Ei}(i) = \alpha \sum_{\{i,j\} \in E}^{} c_{Ei} (u)$$
 
 The vector $c_{Ei} = (c_{Ei}(1), ..., c_{Ei}(N_V))^T$ is the solution to the eigenvalue problem $\textbf{A}\textbf{c}_{Ei} = \alpha^{-1}\textbf{c}_{Ei}$, where $\textbf{A}$ is the adjacency matrix for network graph $G$.
 
-Centrality measures, like the local average transitivity, provide a value for each vertex in the graph. Because of this, we can obtain an overall centrality measure for the graph as a whole if we average the values for each vertex. 
+Centrality measures, like the local average transitivity, provide a value for each vertex in the graph. Because of this, we can obtain an overall centrality measure for the graph as a whole if we average the values for each vertex.  
 
 ```{r examplecentrality, eval  =FALSE, echo = FALSE}
 mean(igraph::degree(karate)) 
