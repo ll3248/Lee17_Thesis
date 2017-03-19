@@ -16,7 +16,8 @@
 
 
 ### Required Packages
-setwd("~/STAT495-Lee/Lee Thesis Data")
+#setwd("~/STAT495-Lee/Lee Thesis Data")
+setwd("~/")
 
 library(sand)
 library(igraph)
@@ -28,7 +29,8 @@ library(intergraph)
 
 ### FACEBOOK
 
-setwd("~/Lee17Thesis/Thesis/data")
+#setwd("~/Lee17Thesis/Thesis/data")
+setwd("~/")
 # this is an edge list
 facebookcombined <- read.table(gzfile("facebook_combined.txt.gz"), header=F)
 
@@ -38,7 +40,8 @@ fbel <- graph.data.frame(facebookcombined)
 
 # creating `network` object
 A_fb <- get.adjacency(fbel, sparse = FALSE)
-fbg <- network::as.network.matrix(A_fb)
+fbg <- network::as.network.matrix(A_fb, directed = FALSE)
+
 
 # characteristics of the Facebook component
 nrow(facebookcombined) #88234 edges
@@ -63,112 +66,257 @@ mean(igraph::eigen_centrality(fbel)$vector) #0.04047316
 #### ERGMs
 
 # needs an object of class network
-# uses `fbg` object
+# uses `fbg`, a `network` object
 
+## one paramter: edges
 # this should be the same as Erdos-Renyi
-# one paramter: edges
-g.ergm1.fbg <- ergm(fbg ~ edges)
-summary(g.ergm1.fbg)
-
 # set the seed for reproducible analysis 
 set.seed(499)
-# network list
-numsim = 5
-g.ergm1.fbg.sim <- simulate(g.ergm1.fbg, nsim = numsim)
 
-g.ergm1.fbg.sim.ecount <- rep(NA, numsim)
-g.ergm1.fbg.sim.coef <- rep(NA, numsim)
-g.ergm1.fbg.sim.apl <- rep(NA, numsim)
-g.ergm1.fbg.sim.dia <- rep(NA, numsim)
-g.ergm1.fbg.sim.avgdeg <- rep(NA, numsim)
-g.ergm1.fbg.sim.avgbtwcen <- rep(NA, numsim)
-g.ergm1.fbg.sim.avgclocen <- rep(NA, numsim)
-g.ergm1.fbg.sim.avgeigveccen <- rep(NA, numsim)
+# model 1a
+g.ergm1a.fbg <- ergm(fbg ~ edges)
 
+numsim = 1000
+set.seed(499)
+
+g.ergm1a.fbg.sim.ecount <- rep(NA, numsim)
+g.ergm1a.fbg.sim.coef <- rep(NA, numsim)
+g.ergm1a.fbg.sim.apl <- rep(NA, numsim)
+g.ergm1a.fbg.sim.dia <- rep(NA, numsim)
+g.ergm1a.fbg.sim.avgdeg <- rep(NA, numsim)
+g.ergm1a.fbg.sim.avgbtwcen <- rep(NA, numsim)
+g.ergm1a.fbg.sim.avgclocen <- rep(NA, numsim)
+g.ergm1a.fbg.sim.avgeigveccen <- rep(NA, numsim)
 
 for (i in 1:numsim) {
+  #simulate graphs from ergms model one at a time
   #convert to igraph object
-  g.ergm1.fbg.sim.convert <- asIgraph(g.ergm1.fbg.sim[[i]])
+  g.ergm.fbg.sim.convert <- asIgraph(simulate(g.ergm1a.fbg, nsim = 1))
   
   #observe the network statistics for this simulated graph
-  g.ergm1.fbg.sim.ecount[i] <- ecount(g.ergm1.fbg.sim.convert)
-  g.ergm1.fbg.sim.coef[i] <- transitivity(g.ergm1.fbg.sim.convert, type="localaverage")
-  g.ergm1.fbg.sim.apl[i] <- average.path.length(g.ergm1.fbg.sim.convert)
-  g.ergm1.fbg.sim.dia[i] <- diameter(g.ergm1.fbg.sim.convert)
-  g.ergm1.fbg.sim.avgdeg[i] <- mean(igraph::degree(g.ergm1.fbg.sim.convert))
-  g.ergm1.fbg.sim.avgbtwcen[i] <- mean(igraph::betweenness(g.ergm1.fbg.sim.convert))
-  g.ergm1.fbg.sim.avgclocen[i] <- mean(igraph::closeness(g.ergm1.fbg.sim.convert))
-  g.ergm1.fbg.sim.avgeigveccen[i] <- mean(igraph::eigen_centrality(g.ergm1.fbg.sim.convert)$vector)
+  g.ergm1a.fbg.sim.ecount[i] <- ecount(g.ergm.fbg.sim.convert)
+  g.ergm1a.fbg.sim.coef[i] <- transitivity(g.ergm.fbg.sim.convert, type="localaverage")
+  g.ergm1a.fbg.sim.apl[i] <- average.path.length(g.ergm.fbg.sim.convert)
+  g.ergm1a.fbg.sim.dia[i] <- diameter(g.ergm.fbg.sim.convert)
+  g.ergm1a.fbg.sim.avgdeg[i] <- mean(igraph::degree(g.ergm.fbg.sim.convert))
+  g.ergm1a.fbg.sim.avgbtwcen[i] <- mean(igraph::betweenness(g.ergm.fbg.sim.convert))
+  g.ergm1a.fbg.sim.avgclocen[i] <- mean(igraph::closeness(g.ergm.fbg.sim.convert))
+  g.ergm1a.fbg.sim.avgeigveccen[i] <- mean(igraph::eigen_centrality(g.ergm.fbg.sim.convert)$vector)
 }
 
-g.ergm1.fbg.sim.df <- as.data.frame(cbind(g.ergm1.fbg.sim.ecount, g.ergm1.fbg.sim.coef, 
-                                          g.ergm1.fbg.sim.apl, g.ergm1.fbg.sim.dia, 
-                                          g.ergm1.fbg.sim.avgdeg, g.ergm1.fbg.sim.avgbtwcen, 
-                                          g.ergm1.fbg.sim.avgclocen, g.ergm1.fbg.sim.avgeigveccen))
+g.ergm1a.fbg.sim.df <- as.data.frame(cbind(g.ergm1a.fbg.sim.ecount, g.ergm1a.fbg.sim.coef, 
+                                           g.ergm1a.fbg.sim.apl, g.ergm1a.fbg.sim.dia, 
+                                           g.ergm1a.fbg.sim.avgdeg, g.ergm1a.fbg.sim.avgbtwcen, 
+                                           g.ergm1a.fbg.sim.avgclocen, g.ergm1a.fbg.sim.avgeigveccen))
 
 # store all the data in the folder below
 # setwd("~/Lee17Thesis/Thesis/data")
 
-# save the data frame for furture use
-# save(g.ergm1.fbg.sim.df,file="g.ergm1.fbg.sim.Rda")
+# save the data frame for future use
+save(g.ergm1a.fbg.sim.df, file = "g.ergm1a.fbg.sim.Rda")
 
 # load the data frame for future use
-# load("g.ergm1.fbg.sim.Rda")
+# load("g.ergm1a.fbg.sim.Rda")
 
 # attach previously saved data frame
-# attach(g.ergm1.fbg.sim)
+attach(g.ergm1a.fbg.sim.df)
 
 # do not forget to detach data frame below
 
-# average network statistics using Watts-Strogatz model
+# average network statistics using ERGM 1a 
 
-mean(g.ergm1.fbg.sim.coef) #
-sd(g.ergm1.fbg.sim.coef) #
+mean(g.ergm1a.fbg.sim.coef) #0.3696413
+sd(g.ergm1a.fbg.sim.coef) #0.001246206
 
-mean(g.ergm1.fbg.sim.apl) #
-sd(g.ergm1.fbg.sim.apl) #
+mean(g.ergm1a.fbg.sim.apl) #2.885094
+sd(g.ergm1a.fbg.sim.apl) #0.004316369
 
-mean(g.ergm1.fbg.sim.dia) #
+mean(g.ergm1a.fbg.sim.dia) #5.216
+sd(g.ergm1a.fbg.sim.dia) #0.4117202
 
-mean(g.ergm1.fbg.sim.avgdeg) #
-sd(g.ws.fbel.avgdeg) #
+mean(g.ergm1a.fbg.sim.avgdeg) #43.66728
+sd(g.ergm1a.fbg.sim.avgdeg) #0.05240351
 
-mean(g.ergm1.fbg.sim.avgbtwcen) #
-sd(g.ergm1.fbg.sim.avgbtwcen) #
+mean(g.ergm1a.fbg.sim.avgbtwcen) #3805.712
+sd(g.ergm1a.fbg.sim.avgbtwcen) #8.757621
 
-mean(g.ergm1.fbg.sim.avgclocen) #
-sd(g.ergm1.fbg.sim.avgclocen) #
+mean(g.ergm1a.fbg.sim.avgclocen) #8.285989e-05
+sd(g.ergm1a.fbg.sim.avgclocen) #8.353233e-06
 
-mean(g.ergm1.fbg.sim.avgeigveccen) #
-sd(g.ergm1.fbg.sim.avgeigveccen) #
+mean(g.ergm1a.fbg.sim.avgeigveccen) #0.04179492
+sd(g.ergm1a.fbg.sim.avgeigveccen) #0.0008307558
 
 # detach previously saved data frame
-# detach(g.ergm1.fbg.sim)
+detach(g.ergm1a.fbg.sim.df)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# two parameters: edges and triangles 
-g.ergm2.fbg <- ergm(fbg ~ edges+triangle)
-
+## two parameters: edges and triangles 
 # set the seed for reproducible analysis 
 set.seed(499)
-g.ergm2.fbg.sim <- simulate(g.ergm2.fbg, numsim=1000)
+
+# model 2a
+# WARNINGS: takes time (20 iterations)
+g.ergm2a.fbg <- ergm(fbg ~ edges + triangle)
+
+numsim = 1000
+set.seed(499)
+
+g.ergm2a.fbg.sim.ecount <- rep(NA, numsim)
+g.ergm2a.fbg.sim.coef <- rep(NA, numsim)
+g.ergm2a.fbg.sim.apl <- rep(NA, numsim)
+g.ergm2a.fbg.sim.dia <- rep(NA, numsim)
+g.ergm2a.fbg.sim.avgdeg <- rep(NA, numsim)
+g.ergm2a.fbg.sim.avgbtwcen <- rep(NA, numsim)
+g.ergm2a.fbg.sim.avgclocen <- rep(NA, numsim)
+g.ergm2a.fbg.sim.avgeigveccen <- rep(NA, numsim)
+
+for (i in 1:numsim) {
+  #simulate graphs from ergms model one at a time
+  #convert to igraph object
+  g.ergm.fbg.sim.convert <- asIgraph(simulate(g.ergm2a.fbg, nsim = 1))
+  
+  #observe the network statistics for this simulated graph
+  g.ergm2a.fbg.sim.ecount[i] <- ecount(g.ergm.fbg.sim.convert)
+  g.ergm2a.fbg.sim.coef[i] <- transitivity(g.ergm.fbg.sim.convert, type="localaverage")
+  g.ergm2a.fbg.sim.apl[i] <- average.path.length(g.ergm.fbg.sim.convert)
+  g.ergm2a.fbg.sim.dia[i] <- diameter(g.ergm.fbg.sim.convert)
+  g.ergm2a.fbg.sim.avgdeg[i] <- mean(igraph::degree(g.ergm.fbg.sim.convert))
+  g.ergm2a.fbg.sim.avgbtwcen[i] <- mean(igraph::betweenness(g.ergm.fbg.sim.convert))
+  g.ergm2a.fbg.sim.avgclocen[i] <- mean(igraph::closeness(g.ergm.fbg.sim.convert))
+  g.ergm2a.fbg.sim.avgeigveccen[i] <- mean(igraph::eigen_centrality(g.ergm.fbg.sim.convert)$vector)
+}
+
+g.ergm2a.fbg.sim.df <- as.data.frame(cbind(g.ergm2a.fbg.sim.ecount, g.ergm2a.fbg.sim.coef, 
+                                           g.ergm2a.fbg.sim.apl, g.ergm2a.fbg.sim.dia, 
+                                           g.ergm2a.fbg.sim.avgdeg, g.ergm2a.fbg.sim.avgbtwcen, 
+                                           g.ergm2a.fbg.sim.avgclocen, g.ergm2a.fbg.sim.avgeigveccen))
+
+# store all the data in the folder below
+# setwd("~/Lee17Thesis/Thesis/data")
+
+# save the data frame for future use
+# save(g.ergm2a.fbg.sim.df, file="g.ergm2a.fbg.sim.Rda")
+
+# load the data frame for future use
+# load("g.ergm2a.fbg.sim.Rda")
+
+# attach previously saved data frame
+# attach(g.ergm2a.fbg.sim.df)
+
+# do not forget to detach data frame below
+
+# average network statistics using ERGM 2a 
+
+mean(g.ergm2a.fbg.sim.coef) #0.4823232
+sd(g.ergm2a.fbg.sim.coef) #0.001965885
+
+mean(g.ergm2a.fbg.sim.apl) #3.052008
+sd(g.ergm2a.fbg.sim.apl) #0.008639291
+
+mean(g.ergm2a.fbg.sim.dia) #6.098
+sd(g.ergm2a.fbg.sim.dia) #0.3008097
+
+mean(g.ergm2a.fbg.sim.avgdeg) #44.54161
+sd(g.ergm2a.fbg.sim.avgdeg) #0.03491666
+
+mean(g.ergm2a.fbg.sim.avgbtwcen) #4140.19
+sd(g.ergm2a.fbg.sim.avgbtwcen) #17.65641
+
+mean(g.ergm2a.fbg.sim.avgclocen) #6.007678e-05
+sd(g.ergm2a.fbg.sim.avgclocen) #1.513646e-05
+
+mean(g.ergm2a.fbg.sim.avgeigveccen) #0.04103567
+sd(g.ergm2a.fbg.sim.avgeigveccen) #3.577786e-05
+
+# detach previously saved data frame
+# detach(g.ergm2a.fbg.sim.df)
+
+
+
+
+
+
+## two parameters: edges and k-stars
+# WARNINGS: takes time (18 iterations)
+# set the seed for reproducible analysis 
+set.seed(499)
+
+# model 2b
+g.ergm2b.fbg <- ergm(fbg ~ edges + kstar(3))
+
+numsim = 1000
+set.seed(499)
+
+g.ergm2b.fbg.sim.ecount <- rep(NA, numsim)
+g.ergm2b.fbg.sim.coef <- rep(NA, numsim)
+g.ergm2b.fbg.sim.apl <- rep(NA, numsim)
+g.ergm2b.fbg.sim.dia <- rep(NA, numsim)
+g.ergm2b.fbg.sim.avgdeg <- rep(NA, numsim)
+g.ergm2b.fbg.sim.avgbtwcen <- rep(NA, numsim)
+g.ergm2b.fbg.sim.avgclocen <- rep(NA, numsim)
+g.ergm2b.fbg.sim.avgeigveccen <- rep(NA, numsim)
+
+for (i in 1:numsim) {
+  #simulate graphs from ergms model one at a time
+  #convert to igraph object
+  g.ergm.fbg.sim.convert <- asIgraph(simulate(g.ergm2b.fbg, nsim = 1))
+  
+  #observe the network statistics for this simulated graph
+  g.ergm2b.fbg.sim.ecount[i] <- ecount(g.ergm.fbg.sim.convert)
+  g.ergm2b.fbg.sim.coef[i] <- transitivity(g.ergm.fbg.sim.convert, type="localaverage")
+  g.ergm2b.fbg.sim.apl[i] <- average.path.length(g.ergm.fbg.sim.convert)
+  g.ergm2b.fbg.sim.dia[i] <- diameter(g.ergm.fbg.sim.convert)
+  g.ergm2b.fbg.sim.avgdeg[i] <- mean(igraph::degree(g.ergm.fbg.sim.convert))
+  g.ergm2b.fbg.sim.avgbtwcen[i] <- mean(igraph::betweenness(g.ergm.fbg.sim.convert))
+  g.ergm2b.fbg.sim.avgclocen[i] <- mean(igraph::closeness(g.ergm.fbg.sim.convert))
+  g.ergm2b.fbg.sim.avgeigveccen[i] <- mean(igraph::eigen_centrality(g.ergm.fbg.sim.convert)$vector)
+}
+
+g.ergm2b.fbg.sim.df <- as.data.frame(cbind(g.ergm2b.fbg.sim.ecount, g.ergm2b.fbg.sim.coef, 
+                                           g.ergm2b.fbg.sim.apl, g.ergm2b.fbg.sim.dia, 
+                                           g.ergm2b.fbg.sim.avgdeg, g.ergm2b.fbg.sim.avgbtwcen, 
+                                           g.ergm2b.fbg.sim.avgclocen, g.ergm2b.fbg.sim.avgeigveccen))
+
+# store all the data in the folder below
+# setwd("~/Lee17Thesis/Thesis/data")
+
+# save the data frame for future use
+# save(g.ergm2b.fbg.sim.df, file="g.ergm2b.fbg.sim.Rda")
+
+# load the data frame for future use
+# load("g.ergm2b.fbg.sim.Rda")
+
+# attach previously saved data frame
+# attach(g.ergm2b.fbg.sim.df)
+
+# do not forget to detach data frame below
+
+# average network statistics using ERGM 2b
+
+mean(g.ergm2b.fbg.sim.coef) #0.3786565
+sd(g.ergm2b.fbg.sim.coef) #0.001279854
+
+mean(g.ergm2b.fbg.sim.apl) #2.850693
+sd(g.ergm2b.fbg.sim.apl) #0.003085883
+
+mean(g.ergm2b.fbg.sim.dia) #5.095
+sd(g.ergm2b.fbg.sim.dia) #0.2933617
+
+mean(g.ergm2b.fbg.sim.avgdeg) #44.0645
+sd(g.ergm2b.fbg.sim.avgdeg) #0.05715313
+
+mean(g.ergm2b.fbg.sim.avgbtwcen) #3736.415
+sd(g.ergm2b.fbg.sim.avgbtwcen) #6.259627
+
+mean(g.ergm2b.fbg.sim.avgclocen) #8.558362e-05
+sd(g.ergm2b.fbg.sim.avgclocen) #6.024968e-06
+
+mean(g.ergm2b.fbg.sim.avgeigveccen) #0.03923439
+sd(g.ergm2b.fbg.sim.avgeigveccen) #0.0002047637
+
+# detach previously saved data frame
+# detach(g.ergm2b.fbg.sim.df)
 
 
 
@@ -176,11 +324,85 @@ g.ergm2.fbg.sim <- simulate(g.ergm2.fbg, numsim=1000)
 
 
 
+## three parameters: edges and triangles and k-stars
+# set the seed for reproducible analysis 
+set.seed(499)
 
+# model 3a
+g.ergm3a.fbg <- ergm(fbg ~ edges + triangle + kstar(3))
 
+numsim = 1000
+set.seed(499)
 
+g.ergm3a.fbg.sim.ecount <- rep(NA, numsim)
+g.ergm3a.fbg.sim.coef <- rep(NA, numsim)
+g.ergm3a.fbg.sim.apl <- rep(NA, numsim)
+g.ergm3a.fbg.sim.dia <- rep(NA, numsim)
+g.ergm3a.fbg.sim.avgdeg <- rep(NA, numsim)
+g.ergm3a.fbg.sim.avgbtwcen <- rep(NA, numsim)
+g.ergm3a.fbg.sim.avgclocen <- rep(NA, numsim)
+g.ergm3a.fbg.sim.avgeigveccen <- rep(NA, numsim)
 
+for (i in 1:numsim) {
+  #simulate graphs from ergms model one at a time
+  #convert to igraph object
+  g.ergm.fbg.sim.convert <- asIgraph(simulate(g.ergm2a.fbg, nsim = 1))
+  
+  #observe the network statistics for this simulated graph
+  g.ergm3a.fbg.sim.ecount[i] <- ecount(g.ergm.fbg.sim.convert)
+  g.ergm3a.fbg.sim.coef[i] <- transitivity(g.ergm.fbg.sim.convert, type="localaverage")
+  g.ergm3a.fbg.sim.apl[i] <- average.path.length(g.ergm.fbg.sim.convert)
+  g.ergm3a.fbg.sim.dia[i] <- diameter(g.ergm.fbg.sim.convert)
+  g.ergm3a.fbg.sim.avgdeg[i] <- mean(igraph::degree(g.ergm.fbg.sim.convert))
+  g.ergm3a.fbg.sim.avgbtwcen[i] <- mean(igraph::betweenness(g.ergm.fbg.sim.convert))
+  g.ergm3a.fbg.sim.avgclocen[i] <- mean(igraph::closeness(g.ergm.fbg.sim.convert))
+  g.ergm3a.fbg.sim.avgeigveccen[i] <- mean(igraph::eigen_centrality(g.ergm.fbg.sim.convert)$vector)
+}
 
+g.ergm3a.fbg.sim.df <- as.data.frame(cbind(g.ergm3a.fbg.sim.ecount, g.ergm3a.fbg.sim.coef, 
+                                           g.ergm3a.fbg.sim.apl, g.ergm3a.fbg.sim.dia, 
+                                           g.ergm3a.fbg.sim.avgdeg, g.ergm3a.fbg.sim.avgbtwcen, 
+                                           g.ergm3a.fbg.sim.avgclocen, g.ergm3a.fbg.sim.avgeigveccen))
+
+# store all the data in the folder below
+# setwd("~/Lee17Thesis/Thesis/data")
+
+# save the data frame for future use
+# save(g.ergm3a.fbg.sim.df, file="g.ergm3a.fbg.sim.Rda")
+
+# load the data frame for future use
+# load("g.ergm3a.fbg.sim.Rda")
+
+# attach previously saved data frame
+# attach(g.ergm3a.fbg.sim.df)
+
+# do not forget to detach data frame below
+
+# average network statistics using ERGM 3a
+
+mean(g.ergm3a.fbg.sim.coef) #0.4823232
+sd(g.ergm3a.fbg.sim.coef) #0.001965885
+
+mean(g.ergm3a.fbg.sim.apl) #3.052008
+sd(g.ergm3a.fbg.sim.apl) #0.008639291
+
+mean(g.ergm3a.fbg.sim.dia) #6.098
+sd(g.ergm3a.fbg.sim.dia) #0.3008097
+
+mean(g.ergm3a.fbg.sim.avgdeg) #44.54161
+sd(g.ergm3a.fbg.sim.avgdeg) #0.03491666
+
+mean(g.ergm3a.fbg.sim.avgbtwcen) #4140.19
+sd(g.ergm3a.fbg.sim.avgbtwcen) #17.65641
+
+mean(g.ergm3a.fbg.sim.avgclocen) #6.007678e-05
+sd(g.ergm3a.fbg.sim.avgclocen) #1.513646e-05
+
+mean(g.ergm3a.fbg.sim.avgeigveccen) #0.04103567
+sd(g.ergm3a.fbg.sim.avgeigveccen) #3.577786e-05
+
+# detach previously saved data frame
+# detach(g.ergm3a.fbg.sim.df)
 
 
 
@@ -233,8 +455,8 @@ g.er.fbel <- as.data.frame(cbind(g.er.fbel.ecount, g.er.fbel.coef,
 # store all the data in the folder below
 # setwd("~/Lee17Thesis/Thesis/data")
 
-# save the data frame for furture use
-# save(g.er.fbel,file="g.er.fbel.Rda")
+# save the data frame for future use
+# save(g.er.fbel, file="g.er.fbel.Rda")
 
 # load the data frame for future use
 # load("g.er.fbel.Rda")
@@ -321,8 +543,8 @@ g.ws.fbel <- as.data.frame(cbind(g.ws.fbel.ecount, g.ws.fbel.coef,
 # store all the data in the folder below
 # setwd("~/Lee17Thesis/Thesis/data")
 
-# save the data frame for furture use
-# save(g.ws.fbel,file="g.ws.fbel.Rda")
+# save the data frame for future use
+# save(g.ws.fbel, file="g.ws.fbel.Rda")
 
 # load the data frame for future use
 # load("g.ws.fbel.Rda")
