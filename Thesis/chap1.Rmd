@@ -18,7 +18,7 @@ options(xtable.comment = FALSE)
 
 Descriptive statistics for networks are somewhat analogous to those seen in elementary statistics. In fact, we have seen a few already in the section of basic terminology in our Introduction. We describe a few below and explain them in the context of Zachary's karate club and Lazega's lawy firm. Much of what is explained below follows from @kolaczyk_statistical_2009, @newman_networks:_2010 and @igraphpackage. Please refer to these texts for more information. 
 
-```{r exampledatach1, eval=TRUE, echo=FALSE, include = FALSE}
+```{r exampledatach1, eval = TRUE, echo = FALSE, include = FALSE}
 data(karate)
 data(lazega)
 ```
