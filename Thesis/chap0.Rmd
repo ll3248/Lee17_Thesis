@@ -58,7 +58,7 @@ data(lazega)
 
 ## Example 1: Zachary's Karate Club
 
-One famous (or infamous) social network, called "the karate club of Zachary," is observed by anthropologist @zachskarateclub. The vertices indicate the 34 individual members of the karate club while the edges indicate the 78 social ties among pairs of the members. Figure 1 provides what is called a "visual summary" of the karate network data. As shown by the colors of the vertices, the club, at this particular moment in time, is being divided into two clusters centering around two vertices as labeled by letters (the master and primary disciple of the dojo).
+One famous (or infamous) social network, called "the karate club of Zachary," is observed by anthropologist @zachskarateclub. The vertices indicate the 34 individual actors (that is, members) of the karate club while the edges indicate the 78 social ties among pairs of the members. Figure 1 provides what is called a "visual summary" of the karate network data. As shown by the colors of the vertices, the club, at this particular moment in time, is being divided into two clusters centering around two vertices as labeled by letters (the master and primary disciple of the dojo).
 
 ```{r karateplot, message = FALSE, eval = FALSE, echo = FALSE}
 plot(karate)
@@ -69,7 +69,7 @@ It is possible to display more than just the actors and their relationships. As 
 
 ## Example 2: Lazega's Law Firm 
 
-Consider a network of lawyers that reflects the relational data collected by @lazega1999multiplexity from a New England law firm consisting of over 70 lawyers to study cooperation in organizations. This network has 36 lawyers and 115 collaborations. In Figure 2, each lawyer is individually labeled with smaller numbers indicating seniority. Shapes for each lawyer indicate the type of practice: litigation (circles) and corporate (squares). The shapes' sizes indicate the relative number of years of having been in with the law firm. Color is used to indicate office location (red, blue, and yellow). Edges indicate collaboration between partners. The graph below provides a visual summary of the lawyer network data.
+Consider a network of actors that reflects the relational data collected by @lazega1999multiplexity of a New England law firm consisting of over 70 lawyers to study cooperation in organizations. This network has 36 actors (lawyers) and 115 ties (collaborations). In Figure 2, each lawyer is individually labeled with smaller numbers indicating seniority. Shapes for each lawyer indicate the type of practice: litigation (circles) and corporate (squares). The shapes' sizes indicate the relative number of years of having been in with the law firm. Color is used to indicate office location (red, blue, and yellow). Edges indicate collaboration between partners. The graph below provides a visual summary of the lawyer network data.
 
 ```{r lawyerplot, message = FALSE, eval = FALSE,  echo = FALSE}
 # Office location indicated by color.
