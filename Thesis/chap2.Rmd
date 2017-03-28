@@ -41,7 +41,7 @@ A *graph model* takes in fixed parameters that generate a graph that can vary in
 
 $$\{\mathbb{P}_{\theta}(G), G \in \mathcal{G}: \theta \in \Theta\}$$
 
-in which $G$ is a collection or ensemble of possible graphs, $P_\theta$ is a probability distribution on $G$, and $\theta$ is a vector of parameters, ranging over possible parameters in $\Theta$.
+in which $G$ is a collection or ensemble of possible graphs, $P_\theta$ is a *probability distribution* on $G$, and $\theta$ is a vector of parameters, ranging over possible parameters in $\Theta$. 
 
 Many of the explanations and derivations for the Erdős-Rényi and Watts-Strogatz networks here follow from @newman_networks:_2010. The section about exponential random graph models (ERGMs) follow largely from @butts_introduction_2015.
 
@@ -126,12 +126,22 @@ Exponential random graph models (ERGMs) are a class of models that can also be u
 
 The general form for an ERGM is as follows: 
 
-$$P(Y = y) = \frac {exp(\theta'g(y))} {k(\theta)}$$
+$$P_{\theta, \mathcal{Y}}(\textbf{Y} = \textbf{y}) = \frac {exp(\theta^{T}\textbf{g(y)})} {\kappa(\theta, \mathcal{Y})},\textbf{y} \in \mathcal{Y}, $$
 
-where $Y$ is the random variable for the state of the network and realization y, $g(y)$ is the vector of model statistics for the network $y$, $\theta$ is the vector of coefficients for those statistics, and $k(\theta)$ is the quantity in the numerator summed over all possible networks. 
+where $\textbf{Y}$ is the random variable for the state of the network and realization $\textbf{y}$, $g(y)$ is the vector of model statistics for the network $y$, $\theta$ is the vector of coefficients for those statistics, and $\kappa(\theta, \mathcal{Y})$ is the quantity in the numerator summed over all possible networks. The $\theta^{T}\textbf{g(y)}$ is a polynomial of coefficients $\theta$ and statistics $g(y)$. This statistics could be things such as the number of edges or triangles of a graph in question. The denominator 
+
+$\kappa(\theta, \mathcal{Y}) = \sum_{z \in \mathcal{Y}}^{} exp(\theta^{T}\textbf{g(y)})$ 
+
+serves a normalizing factor so that $P_{\theta, \mathcal{Y}}(\textbf{Y} = \textbf{y})$ is a proper probability distribution (that is, the values that are outputted are between $0$ and $1$). 
+
+As an example, consider a graph $G$ with the following statistics. $L(G)$ is the number of edges in the graph, $K(G)$ is the number of k-stars, and $T(G)$ is the number of triangles. 
+
+Using an ERGM to fit $G$ would result in the following probability distribution: 
+
+$$$$
 
 
-At the time of this writing, we are still working on the explanation of properties of ERGMs. This will be included as part of the Mathematics thesis. 
+
 
 
 ### Deriving Erdős-Rényi-Gilbert from ERGMs

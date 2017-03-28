@@ -28,7 +28,7 @@ library(acstats)
 ```
 
 
-```{r setupch3, include=FALSE}
+```{r setupch3, include = FALSE}
 library(sand)
 library(igraph)
 library(network)
@@ -49,7 +49,7 @@ Here we will use a subset of the Facebook network to fit graph models to the obs
 
 [^3]: Some of our network statistics that we calculated in R did not match those seen in the websites. For example, we calculated the diameter and transitivity of this Facebook component to be $17$ and $0.617$, respectively. However, the SNAP website reports the diameter and "average clustering coefficient" to be $8$ and $0.6055$, respectively. However, other values, such as node and edge count, as well as the number of triangles, are equal. While SNAP's algorithm used to calculate their network statistics is unclear, for the purposes of this simulation study, we will be using the values that we calculated from the Facebook component to compare with those generated from our graph models. 
 
-```{r loadfbdata, message = FALSE, echo = TRUE, eval = TRUE}
+```{r loadfbdata, message = FALSE, echo = FALSE, eval = TRUE}
 setwd("~/STAT495-Lee/LeeThesis/data")
 
 #edge list
@@ -105,7 +105,7 @@ where $N_{E}$ is the number of edges in  $G$, $V_G$ is the number of nodes in $G
 
 Thus, in order to simulate one graph from this model, we must look at each possible edge among the $4039$ nodes and determine if an edge will form based on the given probability. 
 
-```{r erdosrenyisim, eval = FALSE, echo = TRUE}
+```{r erdosrenyisim, eval = FALSE, echo = FALSE}
 set.seed(499)
 
 numsim <- 1000
@@ -152,7 +152,7 @@ g.er.fbel <- as.data.frame(cbind(g.er.fbel.ecount, g.er.fbel.coef,
 
 The Watts-Strogatz model takes in the following: the number of nodes $N_{V}$, the number of starting neighbors $r$, and the probability of an edge to be rewired $p$. However, instead of rewiring our edges with a fixed probability, we will instead randomly add edges until we have approximately the same number as our observed network. To do this, we start with a lattice with $4039$ nodes and assign a number of edges to the nodes equal to the smallest degree seen in our Facebook network (which we find to be $1$). This is our starting number of neighbors for each node. In this situation, $p = 0$. We then randomly add edges equal to the difference between the our starting lattice and the observed network. That is, we add $88234 - 4039 = 84195$ edges to our lattice. Finally, we simplify our simulated graph to eliminate multi-edges and loops.  Since there are $4039 \choose 2$ edges to choose from, intuitively, we can see that having many multi-edges or loops will be infrequent. This makes up one simulated graph from the model. 
 
-```{r wattsstrogatzsim, eval = FALSE, echo = TRUE}
+```{r wattsstrogatzsim, eval = FALSE, echo = FALSE}
 set.seed(499)
 
 numsim <- 1000
@@ -206,7 +206,7 @@ g.ws.fbel <- as.data.frame(cbind(g.ws.fbel.ecount, g.ws.fbel.coef,
 
 At the time of this writing, I am still currently working on the code for this section of the simulation study. A description of random graph construction and results, along with an associated code chuck will be included in the thesis submission of this project. 
 
-```{r ergmmods, eval = FALSE, echo = TRUE}
+```{r ergmmods, eval = FALSE, echo = FALSE}
 #needs an object of class network
 #this should be the same as Erdős-Rényi
 g.ergm1.fbg <- ergm(fbg ~ edges)
