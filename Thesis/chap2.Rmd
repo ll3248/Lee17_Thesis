@@ -41,14 +41,15 @@ A *graph model* takes in fixed parameters that generate a graph that can vary in
 
 $$\{\mathbb{P}_{\theta}(G), G \in \mathcal{G}: \theta \in \Theta\}$$
 
-in which $G$ is a collection or ensemble of possible graphs, $P_\theta$ is a *probability distribution* on $G$, and $\theta$ is a vector of parameters, ranging over possible parameters in $\Theta$. 
+in which $G$ is a collection or ensemble of possible graphs, $P_\theta$ is a *probability distribution* on $G$ (that is, a function that assigns a value for very possible graph that G can be, whose total sums to $1$), and $\theta$ is a vector of parameters that describe the graphs that G can be, ranging over possible parameters in $\Theta$.  
 
-Many of the explanations and derivations for the Erdős-Rényi and Watts-Strogatz networks here follow from @newman_networks:_2010. The section about exponential random graph models (ERGMs) follow largely from @butts_introduction_2015.
+Many of the explanations and derivations for the Erdős-Rényi and Watts-Strogatz networks here follow from @newman_networks:_2010. Much of the explanations about exponential random graph models (ERGMs) follow largely from @butts_introduction_2015. 
+
 
 
 ## Erdős-Rényi 
 
-The *Erdős-Rényi model* (also known as the *Erdős-Rényi-Gilbert model*) is one of the most studied graph models.[^3] It is also one of the simplest, as it takes only two parameters. The model $G(N_V, N_E)$, first suggested by @gilbert1959random, takes in $N_V$, the number of nodes, and $N_E$ the number of edges. Erdős and Rényi (1959, 1960, 1964) considered the model of the form $G(N_{V}, p)$, where instead of using the number of edges, the probability of an edge forming between any pairs of nodes is fixed. Our focus is on the latter model. 
+The *Erdős-Rényi model* (also known as the *Erdős-Rényi-Gilbert model*) is one of the most studied graph models.[^3] It is also one of the simplest, as it takes only two parameters. The model $G(N_V, N_E)$, first suggested by @gilbert1959random, takes in $N_V$, the number of nodes, and $N_E$ the number of edges. Erdős and Rényi (1959, 1960, 1964) considered the model of the form $G(N_{V}, p)$, where instead of using the number of edges, the probability of an edge forming between any pairs of nodes is fixed. Our focus is on the latter model. It is clear that, on average, the $G(N_{V}, p)$ model would comprise of many more networks than the $G(N_V, N_E)$ model, as the number edges is not fixed. This allows us to consider a larger number of networks with similar network statistics seen in Chapter 1. However, while unlikely, it is possible to obtain a graph with no edges or all possible edges from the  $G(N_{V}, p)$ model. 
 
 [^2]: Many other names for this model exist, such as *Bernoulli model (random graph)* and the *Poisson random graph* due to characteristics of its degree distribution as explained above. In fact, Erdős and Rényi were not the first to study or discover this model. According to Newman (2010), the earliest known study of this model is by R. Solomonoff and A. Rapoport in 1951. 
 
@@ -67,17 +68,17 @@ plot(g2.er, vertex.size=20, vertex.label.cex = 0.75)
 
 ![Examples of graphs generated from the Erdős-Rényi model. Left and Right: $N_V = 10$, $p = 0.25$.](figure/21erdosrenyiexample.png)
 
-In the $G(N_V, p)$ model, graphs constructed according to this model could potentially look every different from each other. This goes back to the idea that a graph model can be thought of as a probability distribution over an ensemble of networks, and all networks in this particular ensemble have equal probability of being chosen. We immediately see a drawback in graphs generated from this model: it places no significance on structures that we may see in our observed graph--such as dense clusters or cliques. 
+In the $G(N_V, p)$ model, graphs constructed according to this model could potentially look every different from each other. This goes back to the idea that a graph model can be thought of as a probability distribution over an ensemble of networks, and all networks in this particular ensemble have equal probability of being chosen. We immediately see a drawback in graphs generated from this model: it places no significance on structures that we may see in our observed social networks--such as having high clustering, cliques, and connected components. 
 
 In spite of this, the Erdős-Rényi model has very nice properties, some of which we discuss here. 
-Even with only two parameters $N_{V}$ and $p$ on hand, we can still create formulas that allow us to calculate various network statistics, such as average degree and clustering coefficient, and describe the model's degree distribution and giant component.
+Even with only two parameters $N_{V}$ and $p$ on hand, we can still create formulas that allow us to calculate various network statistics, such as average degree and clustering coefficient, and describe the model's degree distribution.
 
 As we have mentioned earlier, $G(N_V, p)$ model is the collection of simple graphs with exactly $n$ vertices, meaning that any simple graph $G$ with exactly $N_V$ vertices has probability 
 
 $$P(G) = p^{N_E}(1 - p)^{{N_V \choose 2} - N_E)}$$
 of being picked. For precisely $N_E$ edges, there are ${{n \choose 2} \choose m}$ ways to arange the $N_{E}$ edges among the ${N_V \choose 2}$ possible edges. Thus, total probability of a random graph $G$ with $N_{E}$ edges and $N_{V}$ vertices is 
 
-$$P(N_E) = {{n \choose 2} \choose m}p^{N_E}(1 - p)^{{N_V \choose 2} - N_E)}$$
+$$P(N_E) = {{n \choose 2} \choose m}p^{N_E}(1 - p)^{{N_V \choose 2} - N_E}$$
 This, however, is simply a binomial distribution, where we have some probability of success ($p$), two possible outcomes (edge formation or no edge formation), a finite number of trials (${N_{V} \choose 2}$ distinct edges), and ${{N_{V} \choose 2} \choose m}$ different ways in which the outcomes can be arranged. Using this, the mean value of $N_E$ for the model is then a weighted average. It is the sum of the products of every possible number of edges $N_E$ and the total probability that a graph with $N_{V}$ vertices and N_{E} edges appears, $P(N_{E})$. However, because we know the probability of an edge forming, the mean number of edges would eqaul to the product of the total number of possible vertices ${N_{V} \choose 2}$ and the probability $p$. This makes sense as we can expect that $100p$ percent of the possible edges in the graph to actually have edges. Thus, 
 
 $$ \langle N_{E} \rangle = \sum_{N_{E}=0}^{{n \choose 2}} N_{E}P(N_{E}) = {n \choose 2}p$$
@@ -97,55 +98,79 @@ To use this model in our simulation study, we simply take the number of nodes an
 
 ## Watts-Strogatz
 
-@watts_collective_1998 noticed that many networks have high levels of clustering and only require short average path lengths between mode nodes. In the Erdős-Rényi model, simulated graphs of parable magnitude tend to have smaller-than-expected clustering coefficients. In the Watts-Strogatz model, we start with $N_V$ vertices arranged in a circular fashion, $r$ number of beginning neighbors for each node, and the probability $p$ of an edge being moved to another pair of vertices.  
+@watts_collective_1998 noticed that many networks in real life have high levels of clustering and only require short average path lengths between nodes with high degree. In the Erdős-Rényi model, simulated graphs of parable magnitude tend to have smaller-than-expected clustering coefficients. As we had seen in Milgram's experiment earlier, networks among people are not quite has disconnected as we once thought. If any two people are ever seperated by approximately six people, we have some notion of a "small-world." In the Watts-Strogatz model, we start with several parameters: $N_V$ vertices, which are arranged in a circular fashion (which we will call a *lattice*), the number of beginning neighbors for each node, $r$, and the probability, $p$, of an edge being moved to another pair of vertices.  A varient of this model, which we will use instead, sets $p = 0$ and adds random edges randomly that connect vertices that did not have an edge before. 
 
-```{r wattsstrogatzexample, eval = TRUE, echo = FALSE}
+```{r wattsstrogatzexample, include = FALSE}
 set.seed(499)
 
 g1.ws <- watts.strogatz.game(dim = 1, size = 10, nei = 2, p = 0)
-g2.ws <- watts.strogatz.game(dim = 1, size = 10, nei = 2, p = 0.25)
+
+g2.ws <- watts.strogatz.game(dim = 1, size = 10, nei = 2, p = 0)
+# the effect of adding one edge to the circular arrangement
+randomedgepairs <- sample(1:10, 8, replace=TRUE)
+g2.ws <- simplify(add_edges(g2.ws, randomedgepairs))
+
+diameter(g1.ws)
+average.path.length(g1.ws)
+transitivity(g1.ws, type = "localaverage")
+diameter(g2.ws)
+average.path.length(g2.ws)
+transitivity(g2.ws, type = "localaverage")
 ```
 
-```{r wattsstrogatzexampleplot, eval=FALSE, echo=FALSE}
+```{r wattsstrogatzexampleplot, include = FALSE}
 par(mfrow=c(1,2))
-plot(g1.ws, vertex.size=20, vertex.label.cex = 0.75)
-plot(g2.ws, vertex.size=20, vertex.label.cex = 0.75)
+plot(g1.ws, vertex.size = 20, vertex.label.cex = 0.75)
+plot(g2.ws, vertex.size = 20, vertex.label.cex = 0.75, layout=layout_in_circle)
 ```
 
-In a regular lattice with 10 nodes, each having two neighbors, the clustering coefficient is relatively high at exactly $0.5$. Diameter and average path length are nontrivial, and can be rather high as well (at $3$ and $1.667$, respectively). 
+In a regular lattice with $10$ nodes, each having two neighbors, the clustering coefficient is relatively high at exactly $0.5$. Diameter and average path length are nontrivial, and can be rather high as well (at $3$ and $1.667$, respectively). 
 
-![Examples of graphs generated from the Watts-Strogatz model. Both: $N_V$ = 10$, $r = 2$. Left: $p = 0$. Right: $p= 0.25$.](figure/22wattsstrogatzexample.png)
+![Examples of graphs generated from the Watts-Strogatz model. Both: $N_V = 10$, $r = 2$. Left: $N_E = 20$. Right: $N_E = 20$ with $4$ extra edges.](figure/22wattsstrogatzexample.png)
 
-By adding a probability of rewiring, the clustering coefficient increases, while diameter and average path length changes, but not necessarily in predictable ways. This makes sense because this rewiring essentially creates random shortcuts in the network framework. In the right-hand graph of Figure 3.2, which is the left-hand graph after a rewiring probability of $0.25$, we see that the transitivity, diameter, and average path length are now $0.507$, $4$, and $1.733$, respectively. 
+By adding some edges (instead of simply rewiring), the clustering coefficient, diameter, and average path length tend to decrease. This makes sense because this rewiring creates random shortcuts in the network framework. In the right-hand graph of Figure 3.2, which is the left-hand graph after adding $4$ random edges, we see that the transitivity, diameter, and average path length are now $0.52$, $2$, and $1.467$, respectively. 
  
 While it is entirely possible that a network could potentially have such a kind of rewiring process, it is less likely that this is true in the context of social networks. In other words, ties between people do not usually disappear and randomly reappear between others. However, we can still make use of the fact that it starts with a connected lattice structure with some number of neighbors and randomly add edges until we get a graph of similar order and size. In the case where we start with a lattice of $r = 1$ neighbor, however, this is almost no different from the Erdős-Rényi model. This is because a lattice structure with only one neighbor is very similar to a random assignment of edges (but with the restiction that each node only has a degree of $1$). Additionally, depending on the number of edges that need to be added to the network, the starting lattice may not have a large effect on the overall structure of the graph generated. 
 
 ## Exponential Random Graph Models (ERGMs)
 
-Exponential random graph models (ERGMs) are a class of models that can also be used to generate probability distributions for a set of random graphs. ERGMs have enormous flexibility in construction since it allows any combinition of parameters from a given data set to be used in constructing the model. We are not only able to simulate additional graphs from the underlying probability distribution like in the Erdős-Rényi and Watts-Strogatz models, but we are also able to obtain maximum-likelihood estimates of the model for the data set, conduct goodness-of-fit tests for 
+Exponential random graph models (ERGMs) are a class of models that can also be used to generate probability distributions for a set of random graphs. ERGMs have enormous flexibility in construction since they allow any combination of parameters from a given data set to be used in constructing the model. We are not only able to simulate additional graphs from the underlying probability distribution like in the Erdős-Rényi and Watts-Strogatz models, but we are also able to obtain maximum-likelihood estimates of the model for the data set, conduct goodness-of-fit tests for model assessment. 
 
 The general form for an ERGM is as follows: 
 
 $$P_{\theta, \mathcal{Y}}(\textbf{Y} = \textbf{y}) = \frac {exp(\theta^{T}\textbf{g(y)})} {\kappa(\theta, \mathcal{Y})},\textbf{y} \in \mathcal{Y}, $$
 
-where $\textbf{Y}$ is the random variable for the state of the network and realization $\textbf{y}$, $g(y)$ is the vector of model statistics for the network $y$, $\theta$ is the vector of coefficients for those statistics, and $\kappa(\theta, \mathcal{Y})$ is the quantity in the numerator summed over all possible networks. The $\theta^{T}\textbf{g(y)}$ is a polynomial of coefficients $\theta$ and statistics $g(y)$. This statistics could be things such as the number of edges or triangles of a graph in question. The denominator 
+where $\textbf{Y}$ is the random variable representing the adjacency matrix of a graph and $\textbf{y}$ is the particular adjacency matrix we observe. $\textbf{g(y)}$ is the vector of model statistics for $\textbf{y}$, $\theta$ is the vector of coefficients for those statistics, and $\kappa(\theta, \mathcal{Y})$ is the quantity in the numerator summed over all possible networks. The $\theta^{T}\textbf{g(y)}$ is a polynomial of coefficients $\theta$ and statistics $g(y)$. This statistics could be things such as the number of edges or triangles of a graph in question. The denominator 
 
-$\kappa(\theta, \mathcal{Y}) = \sum_{z \in \mathcal{Y}}^{} exp(\theta^{T}\textbf{g(y)})$ 
+$$\kappa(\theta, \mathcal{Y}) = \sum_{z \in \mathcal{Y}}^{} exp(\theta^{T}\textbf{g(y)})$$
 
-serves a normalizing factor so that $P_{\theta, \mathcal{Y}}(\textbf{Y} = \textbf{y})$ is a proper probability distribution (that is, the values that are outputted are between $0$ and $1$). 
+serves a normalizing factor so that $P_{\theta, \mathcal{Y}}(\textbf{Y} = \textbf{y})$ is a proper probability distribution (that is, the values that are outputted are between $0$ and $1$). It is also possible to consider actual graphs themselves instead of their adjacency matrices. So, we can replace $\textbf{y}$ with an observed graph $g$, $\textbf{Y}$ with a random graph $G$, and $\mathcal{Y}$ with the ensemble of graphs $\mathcal{G}$.
 
-As an example, consider a graph $G$ with the following statistics. $L(G)$ is the number of edges in the graph, $K(G)$ is the number of k-stars, and $T(G)$ is the number of triangles. 
+As an example, consider a graph $g$ with the following statistics. $L(g)$ is the number of edges in the graph, $T(g)$ is the number of triangles, and $K(g)$ is the number of k-stars. 
 
-Using an ERGM to fit $G$ would result in the following probability distribution: 
+Using an ERGM to fit $g$ would result in the following probability distribution: 
 
-$$$$
+$$P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g) + \theta_{T}T(g)+\theta_{K}K(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g) + \theta_{T}T(g)+\theta_{K}K(g))}, g \in \mathcal{G} $$
+Adding a mapping; scripted Y is the ensemble, Y is random variable, y is the specific matrix
+Estimating thetas
+Maximum likelihood 
+And MCMC
 
+### Deriving the Erdős-Rényi Model from ERGMs
 
+The Erdős-Rényi and Watts-Strogatz models are actually special cases of ERGMs. Here, we will show that the Erdős-Rényi model can be derived from an ERGM that only takes into acount the number of edges in a graph. 
 
+Suppose we have a graph $G$ and the only statsitic we have is L(G), the number of edges in G. Our probability model is thus
 
+$$P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g))}, g \in \mathcal{G} $$
+Consider the probability distribution for the Erdős-Rényi model, as seen below. 
 
-### Deriving Erdős-Rényi-Gilbert from ERGMs
-
-The Erdős-Rényi-Gilbert and Watts-Strogatz models are actually special cases of ERGMs. Here, we will show that the Erdős-Rényi model can be derived from an ERGM that only takes into acount the number of edges in a graph. 
-
+$$
+\begin{align}
+\mathcal{L}^{-1}\left\{f(d)\right\} 
+& = \mathcal{L}^{-1}\left\{f_1(\delta).f_2(\delta)\right\} \\
+& = \exp(mt) \star \left\{\frac{l}{2\sqrt{\pi t^3}} \exp(-l^2/{4t})\right\} \\
+& = F_1 * F_2
+\end{align}
+$$
 
