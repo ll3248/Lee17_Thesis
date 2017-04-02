@@ -43,15 +43,13 @@ $$\{\mathbb{P}_{\theta}(G), G \in \mathcal{G}: \theta \in \Theta\}$$
 
 in which $G$ is a collection or ensemble of possible graphs, $P_\theta$ is a *probability distribution* on $G$ (that is, a function that assigns a value for very possible graph that G can be, whose total sums to $1$), and $\theta$ is a vector of parameters that describe the graphs that G can be, ranging over possible parameters in $\Theta$.  
 
-Many of the explanations and derivations for the Erdős-Rényi and Watts-Strogatz networks here follow from @newman_networks:_2010. Much of the explanations about exponential random graph models (ERGMs) follow largely from @butts_introduction_2015. 
-
-
+Many of the explanations and derivations for the Erdős-Rényi and Watts-Strogatz networks here follow from @newman_networks:_2010. Much of the explanations about exponential random graph models (ERGMs) follow largely from @butts_introduction_2015, @hunter_ergm:_2008, and @jacksonergms2013. 
 
 ## Erdős-Rényi 
 
-The *Erdős-Rényi model* (also known as the *Erdős-Rényi-Gilbert model*) is one of the most studied graph models.[^3] It is also one of the simplest, as it takes only two parameters. The model $G(N_V, N_E)$, first suggested by @gilbert1959random, takes in $N_V$, the number of nodes, and $N_E$ the number of edges. Erdős and Rényi (1959, 1960, 1964) considered the model of the form $G(N_{V}, p)$, where instead of using the number of edges, the probability of an edge forming between any pairs of nodes is fixed. Our focus is on the latter model. It is clear that, on average, the $G(N_{V}, p)$ model would comprise of many more networks than the $G(N_V, N_E)$ model, as the number edges is not fixed. This allows us to consider a larger number of networks with similar network statistics seen in Chapter 1. However, while unlikely, it is possible to obtain a graph with no edges or all possible edges from the  $G(N_{V}, p)$ model. 
+The *Erdős-Rényi model* (also known as the *Erdős-Rényi-Gilbert model*) is one of the most studied graph models.[^3] It is also one of the simplest, as it takes only two parameters. The model $G(N_V, N_E)$, first suggested by @gilbert1959random, takes in $N_V$, the number of nodes, and $N_E$ the number of edges. Erdős and Rényi (1959, 1960, 1964) considered the model of the form $G(N_{V}, p)$, where instead of using the number of edges, the probability of an edge forming between any pairs of nodes is fixed. Our focus is on the latter model. It is clear that, on average, the $G(N_{V}, p)$ model would comprise of many more networks than the $G(N_V, N_E)$ model, as the number edges is not fixed. This allows us to consider a larger number of networks with similar network statistics seen in Chapter 1. However, while unlikely, it is possible to obtain a graph with no edges or all possible edges from the  $G(N_{V}, p)$ model (Newman 2010). 
 
-[^2]: Many other names for this model exist, such as *Bernoulli model (random graph)* and the *Poisson random graph* due to characteristics of its degree distribution as explained above. In fact, Erdős and Rényi were not the first to study or discover this model. According to Newman (2010), the earliest known study of this model is by R. Solomonoff and A. Rapoport in 1951. 
+[^2]: Many other names for this model exist, such as *Bernoulli model* (or *Bernoulli random graph*) and the *Poisson random graph* due to characteristics of its degree distribution as we will explain. In fact, Erdős and Rényi were not the first to study or discover this model. According to Newman (2010), the earliest known study of this model is by R. Solomonoff and A. Rapoport in 1951. 
 
 ```{r erdosrenyiexample, fig.align = 'center', eval=TRUE, include = FALSE}
 set.seed(499)
@@ -73,12 +71,12 @@ In the $G(N_V, p)$ model, graphs constructed according to this model could poten
 In spite of this, the Erdős-Rényi model has very nice properties, some of which we discuss here. 
 Even with only two parameters $N_{V}$ and $p$ on hand, we can still create formulas that allow us to calculate various network statistics, such as average degree and clustering coefficient, and describe the model's degree distribution.
 
-As we have mentioned earlier, $G(N_V, p)$ model is the collection of simple graphs with exactly $n$ vertices, meaning that any simple graph $G$ with exactly $N_V$ vertices has probability 
+As we have mentioned earlier, $G(N_V, p)$ model is the collection of simple graphs with exactly $n$ vertices, meaning that a particular simple graph $g$ with exactly $N_V$ vertices has probability 
 
-$$P(G) = p^{N_E}(1 - p)^{{N_V \choose 2} - N_E)}$$
+$$P(G = g) = p^{N_E}(1 - p)^{\left({N_V \choose 2} - N_E \right)}$$
 of being picked. For precisely $N_E$ edges, there are ${{n \choose 2} \choose m}$ ways to arange the $N_{E}$ edges among the ${N_V \choose 2}$ possible edges. Thus, total probability of a random graph $G$ with $N_{E}$ edges and $N_{V}$ vertices is 
 
-$$P(N_E) = {{n \choose 2} \choose m}p^{N_E}(1 - p)^{{N_V \choose 2} - N_E}$$
+$$P(G) = {{n \choose 2} \choose m}p^{N_E}(1 - p)^{{N_V \choose 2} - N_E}$$
 This, however, is simply a binomial distribution, where we have some probability of success ($p$), two possible outcomes (edge formation or no edge formation), a finite number of trials (${N_{V} \choose 2}$ distinct edges), and ${{N_{V} \choose 2} \choose m}$ different ways in which the outcomes can be arranged. Using this, the mean value of $N_E$ for the model is then a weighted average. It is the sum of the products of every possible number of edges $N_E$ and the total probability that a graph with $N_{V}$ vertices and N_{E} edges appears, $P(N_{E})$. However, because we know the probability of an edge forming, the mean number of edges would eqaul to the product of the total number of possible vertices ${N_{V} \choose 2}$ and the probability $p$. This makes sense as we can expect that $100p$ percent of the possible edges in the graph to actually have edges. Thus, 
 
 $$ \langle N_{E} \rangle = \sum_{N_{E}=0}^{{n \choose 2}} N_{E}P(N_{E}) = {n \choose 2}p$$
@@ -86,27 +84,31 @@ $$ \langle N_{E} \rangle = \sum_{N_{E}=0}^{{n \choose 2}} N_{E}P(N_{E}) = {n \ch
 For a graph with exactly $N_{E}$ edges, it is easy to see that the mean degree is $\frac {2N_{E}} {N_{V}}$. The factor of $2$ allows an edge to be counted as part of the degree for each of the pair vertices that it connects. By taking a similar weighted average, where we sum the products of the average degree of a graph with $N_E$ edges with the total probability of a graph with $N_E$ edges being chosen, we can get the average degree, denoted $c$,  for this model. Using the formula for the mean number of edges above, we can simplify this weighted average
 
 $$c = \langle N_{V} \rangle = \sum_{N_{E}=0}^{{n \choose 2}} \frac {2N_{E}} {N_{V}} P(N_{E}) = \frac {2} {N_{V}} {N_{V} \choose 2}p = (N_{V} - 1)p$$
-The right-hand side of this equation makes sense; for any vertex on the random graph, we would expect $100p$ percent of the other $N_{V} - 1$ vertices to be connected to it. 
+The right-hand side of this equation makes sense; for any vertex on the random graph, we would expect $100p$ percent of the other $N_{V} - 1$ vertices to be connected to it (Newman 2010).
 
-We can also describe the distribution of the $G(N_V, p)$. We show it is a binomial distribution, and that it actually converges to the Poisson distribution as the number of vertices {N_V} increases. To see this, observe that the probability, $p_k$, of a vertex connected $k$ other vertices (without loops) is: 
+We can also describe the distribution of the $G(N_V, p)$. We show it is a binomial distribution, and that it actually converges to the Poisson distribution as the number of vertices $N_{V}$ increases infinitely. To see this, observe that the probability, $p_k$, of a vertex connected $k$ other vertices (without loops) is: 
 
 $$p_{k} = {N_{V} -1 \choose k}p^{k}(1 - p)^{N_{V} - 1 - k}.$$
 
-Consider the equation for the mean number of edges: $c = (N_{V} - 1)p$. Rewriting this for $p$ gives, $p = \frac {c} {N_{V}-1}$. This tells us that as the number of nodes increases, the probability $p$ will decrease to $0$ indefinitely. Using, this, we can rewrite the $(1 - p)^{N_{V} - 1 - k}$ factor of the equation for $p_{k}$ above as the solution to the limit as $n \to \infty$
+Consider the equation for the mean number of edges: $c = (N_{V} - 1)p$. Rewriting this for $p$ gives, $p = \frac {c} {N_{V} - 1}$. This tells us that as the number of nodes increases, the probability $p$ will decrease to $0$ indefinitely. Using, this, we can rewrite the $(1 - p)^{N_{V} - 1 - k}$ factor of the equation for $p_{k}$ above as the solution to the limit as $N_{V} \to \infty$
 
-$$e^{ln((1 - p)^{N_{V} - 1 - k})} = e^{N_{V} - 1 - k}ln(1 - \frac {c} {n - 1}) \simeq e^{-(n - 1 - k)(\frac {c} {n - 1})} \simeq e^{-c}$$
+$$(1 - p)^{N_{V} - 1 - k} = e^{ln((1 - p)^{N_{V} - 1 - k})} = e^{N_{V} - 1 - k}ln(1 - \frac {c} {n - 1}) \simeq e^{-(n - 1 - k)(\frac {c} {n - 1})} \simeq e^{-c},$$
 where we have expanded the natural logarithm as a Taylor series. These approximations become more exact as $n \to \infty$. 
 
 Similarly, we can take the limit as $n \to \infty$ for the ${N_{V} - 1 \choose k}$ factor of the $p_k$ probability.
 
-$${N_{V} - 1 \choose k} = ()$$
+$${N_{V} - 1 \choose k} = \frac {(N_{V} - 1)!} {(N_{V} - 1 - k)!k!} = \frac {(N_{V} - 1)^{k}} {k!}.$$
 
-To use this model in our simulation study, we simply take the number of nodes and the probability of a link forming equal to the number of observed edges divided by the number of possible edges (the number of nodes choose 2). That is, $\frac{N_{E}} {{N_{V} \choose 2}}$.
-}
+Combining these two equations and $p = \frac {c} {N_{V} - 1}$, the probability $p_{k}$ becomes
+
+$$p_{k} = {N_{V} -1 \choose k}p^{k}(1 - p)^{N_{V} - 1 - k} = \frac {(N_{V} - 1)^{k}} {k!}\left(\frac {c} {N_{V} - 1}\right)^{k}e^{-c} = e^{-c} \frac{c^{k}} {k!}$$
+as $N_{V} \to \infty$. This equation is actually the Poisson distribution.
+
+To use this model in our simulation study, we simply take the number of nodes, $N_{V}$, and the probability of a link forming, which equal to the number of observed edges divided by the number of possible edges, that is, $\frac{N_{E}} {{N_{V} \choose 2}}$.
 
 ## Watts-Strogatz
 
-@watts_collective_1998 noticed that many networks in real life have high levels of clustering and only require short average path lengths between nodes with high degree. In the Erdős-Rényi model, simulated graphs of parable magnitude tend to have smaller-than-expected clustering coefficients. As we had seen in Milgram's experiment earlier, networks among people are not quite has disconnected as we once thought. If any two people are ever seperated by approximately six people, we have some notion of a "small-world." In the Watts-Strogatz model, we start with several parameters: $N_V$ vertices, which are arranged in a circular fashion (which we will call a *lattice*), the number of beginning neighbors for each node, $r$, and the probability, $p$, of an edge being moved to another pair of vertices.  A varient of this model, which we will use instead, sets $p = 0$ and adds random edges randomly that connect vertices that did not have an edge before. 
+@watts_collective_1998 noticed that many networks in real life have high levels of clustering and only require short average path lengths between nodes with high degree. In the Erdős-Rényi model, simulated graphs of parable magnitude tend to have smaller-than-expected clustering coefficients. As we had seen in Milgram's experiment earlier, networks among people are not quite has disconnected as we once thought. If any two people are ever seperated by approximately six people, we have some notion of a "small-world." In the Watts-Strogatz model, we start with several parameters: $N_V$ vertices, which are arranged in a circular fashion (which we will call a *lattice*), the number of beginning neighbors for each node, $r$, and the probability, $p$, of an edge being moved to another pair of vertices.  A varient of this model, which we will use instead, sets $p = 0$ and adds random edges randomly that connect vertices that did not have an edge before (Newman 2010). 
 
 ```{r wattsstrogatzexample, include = FALSE}
 set.seed(499)
@@ -142,13 +144,15 @@ While it is entirely possible that a network could potentially have such a kind 
 
 ## Exponential Random Graph Models (ERGMs)
 
-Exponential random graph models (ERGMs) are a class of models that can also be used to generate probability distributions for a set of random graphs. ERGMs have enormous flexibility in construction since they allow any combination of parameters from a given data set to be used in constructing the model. We are not only able to simulate additional graphs from the underlying probability distribution like in the Erdős-Rényi and Watts-Strogatz models, but we are also able to obtain maximum-likelihood estimates of the model for the data set, conduct goodness-of-fit tests for model assessment. 
+Exponential random graph models (ERGMs) are a class of models that can also be used to generate probability distributions for a set of random graphs. ERGMs have enormous flexibility in construction since they allow any combination of parameters from a given data set to be used in constructing the model. We are not only able to simulate additional graphs from the underlying probability distribution like in the Erdős-Rényi and Watts-Strogatz models, but we are also able to obtain maximum-likelihood estimates of the model for the data set, conduct goodness-of-fit tests for model assessment (Hunter et al. 2008a).
 
 The general form for an ERGM is as follows: 
 
 $$P_{\theta, \mathcal{Y}}(\textbf{Y} = \textbf{y}) = \frac {exp(\theta^{T}\textbf{g(y)})} {\kappa(\theta, \mathcal{Y})},\textbf{y} \in \mathcal{Y}, $$
 
-where $\textbf{Y}$ is the random variable representing the adjacency matrix of a graph and $\textbf{y}$ is the particular adjacency matrix we observe. $\textbf{g(y)}$ is the vector of model statistics for $\textbf{y}$, $\theta$ is the vector of coefficients for those statistics, and $\kappa(\theta, \mathcal{Y})$ is the quantity in the numerator summed over all possible networks. The $\theta^{T}\textbf{g(y)}$ is a polynomial of coefficients $\theta$ and statistics $g(y)$. This statistics could be things such as the number of edges or triangles of a graph in question. The denominator 
+where $\textbf{Y}$ is the random variable representing the adjacency matrix of a graph and $\textbf{y}$ is the particular adjacency matrix we observe. $\textbf{g(y)}$ is the vector of model statistics for $\textbf{y}$, $\theta$ is the vector of coefficients for those statistics, and $\kappa(\theta, \mathcal{Y})$ is the quantity in the numerator summed over all possible networks. The $\theta^{T}\textbf{g(y)}$ is a polynomial of coefficients $\theta$ and statistics $g(y)$. This statistics could be things such as the number of edges or triangles of a graph in question. The $\theta$ parameters are interpreted as the log odds of an individual tie conditional on all the others (Hunter et al. 2008a, Butts et al. 2015, Jackson 2013).
+
+The denominator 
 
 $$\kappa(\theta, \mathcal{Y}) = \sum_{z \in \mathcal{Y}}^{} exp(\theta^{T}\textbf{g(y)})$$
 
@@ -159,17 +163,25 @@ As an example, consider a graph $g$ with the following statistics. $L(g)$ is the
 Using an ERGM to fit $g$ would result in the following probability distribution: 
 
 $$P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g) + \theta_{T}T(g)+\theta_{K}K(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g) + \theta_{T}T(g)+\theta_{K}K(g))}, g \in \mathcal{G} $$
-Adding a mapping; scripted Y is the ensemble, Y is random variable, y is the specific matrix
-Estimating thetas
-Maximum likelihood 
-And MCMC
+The statsitcs used to build an ERGM are either *dyad independent* or *dyad dependent* terms. Dyad independent terms (such as edges between nodes, $L(g)$) imply no dependence between the edges of other nodes. Thus, the presense or absense of an edge between vertices does not affect and is not affected by the presence and absense of other edges. On the other hand, dyad dependent terms (such as triangles, $T(g)$ and k-stars $K(g)$) do imply dependence among edged in the graph; the absense of a link does affect the triangle and k-star counts. In order to calculate the $\theta$ parameters, ERGMs implement an estimation algorihm. If the model only contains dyad independent terms, the algorithm is simply maximum log-likelihood estimation, in which we find the value that maximizes the log-probability model. However, if the ERGM contains dyad dependent terms, it can be impossible to find a closed form of the probability model and so we would be unable to use estimate the parameters by maximixing the log-likelihood function. Instead, we turn to a new method of estimation, called *Markov chain Monte Carlo (MCMC)*. In short, we estimate the parameters via simulation rather than precise calculation (Butts et al. 2015). See @gilks1995markov for more information about MCMC. 
 
 ### Deriving the Erdős-Rényi Model from ERGMs
 
 The Erdős-Rényi and Watts-Strogatz models are actually special cases of ERGMs. Here, we will show that the Erdős-Rényi model can be derived from an ERGM that only takes into acount the number of edges in a graph. 
 
-Suppose we have a graph $G$ and the only statsitic we have is L(G), the number of edges in G. Our probability model is thus
+Suppose we have a particular graph $g$ and the only statsitic we have is L(G), the number of edges in $g$. Our probability model is thus
 
-$$P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g))}, g \in \mathcal{G} $$
-Consider the probability distribution for the Erdős-Rényi model, as seen below. 
+$$P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g'))}, g \in \mathcal{G}.$$
+Consider the probability distribution for a particular graph $g$ with $N_E$ edges again (from the Erdős-Rényi model). Using the fact that $N_{V} = L(g)$, taking the equation as a power of base $e$, we get the following: 
 
+$$
+\begin{aligned}
+P(g) &= p^{N_E}(1 - p)^{\left({N_V \choose 2} - N_E \right)} \\
+&= p^{L(g)}(1 - p)^{\left(\frac {N_{V}(N_{V} - 1)} {2} - L(g) \right)} \\
+&= \left( \frac {p} {1-p} \right)^{L(g)}(1 - p)^{\frac {N_{V}(N_{V} - 1)} {2}} \\
+&= exp \left(L(g)log \left(\frac {p} {1-p} \right) - \frac {N_{V}(N_{V} - 1)} {2} log \left( \frac {p} {1-p} \right) \right) \\
+&= exp(\theta_{L}L(g) - c) \\
+&= \frac {exp(\theta_{L}L(g))} {exp(c)}
+\end{aligned} 
+$$
+where $c = \frac {N_{V}(N_{V} - 1)} {2} ln \left( \frac {p} {1-p} \right)$ is the normalizing constant $\kappa(\theta, \mathcal{Y})$ seen in the general form of an ERGM and exactly the the denominator $\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g'))$ seen in the ERGM that fits a graph $g$ with only the edge statistic $L(g)$ (Hunter et al. 2008a & Jackson 2013) 

@@ -53,7 +53,7 @@ Here we will use a subset of the Facebook network to fit graph models to the obs
 setwd("~/STAT495-Lee/LeeThesis/data")
 
 #edge list
-facebookcombined <- read.table(gzfile("facebook_combined.txt.gz"), header=F)
+facebookcombined <- read.table(gzfile("facebook_combined.txt.gz"), header = F)
 
 #igraph object
 fbel <- graph.data.frame(facebookcombined)
@@ -203,8 +203,6 @@ g.ws.fbel <- as.data.frame(cbind(g.ws.fbel.ecount, g.ws.fbel.coef,
 
 
 ### Using ERGMs
-
-At the time of this writing, I am still currently working on the code for this section of the simulation study. A description of random graph construction and results, along with an associated code chuck will be included in the thesis submission of this project. 
 
 ```{r ergmmods, eval = FALSE, echo = FALSE}
 #needs an object of class network

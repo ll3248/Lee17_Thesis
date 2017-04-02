@@ -51,7 +51,7 @@
 \title{A Simulation Study using Random Graph Models to fit Social Networks}
 \author{Levi Lee}
 % The month and year that you submit your FINAL draft TO THE LIBRARY (May or December)
-\date{April 03, 2017}
+\date{April 05, 2017}
 \division{Statistics}
 \advisor{Amy Wagaman}
 %If you have two advisors for some reason, you can use the following
@@ -740,7 +740,8 @@ current work in progress.
   Many of the explanations and derivations for the Erdős-Rényi and
   Watts-Strogatz networks here follow from Newman (2010). Much of the
   explanations about exponential random graph models (ERGMs) follow
-  largely from C. Butts et al. (2015).
+  largely from C. Butts et al. (2015), D. R. Hunter, Handcock, Butts,
+  Goodreau, \& Morris (2008), and Jackson (2013).
   
   \section{Erdős-Rényi}\label{erdos-renyi}
   
@@ -767,8 +768,8 @@ current work in progress.
   \(G(N_V, N_E)\) model, as the number edges is not fixed. This allows us
   to consider a larger number of networks with similar network statistics
   seen in Chapter 1. However, while unlikely, it is possible to obtain a
-  graph with no edges or all possible edges from the \(G(N_{V}, p)\)
-  model.
+  graph with no edges or all possible edges from the \(G(N_{V}, p)\) model
+  (Newman 2010).
   
   \begin{figure}[htbp]
   \centering
@@ -794,16 +795,16 @@ current work in progress.
   coefficient, and describe the model's degree distribution.
   
   As we have mentioned earlier, \(G(N_V, p)\) model is the collection of
-  simple graphs with exactly \(n\) vertices, meaning that any simple graph
-  \(G\) with exactly \(N_V\) vertices has probability
+  simple graphs with exactly \(n\) vertices, meaning that a particular
+  simple graph \(g\) with exactly \(N_V\) vertices has probability
   
-  \[P(G) = p^{N_E}(1 - p)^{{N_V \choose 2} - N_E)}\] of being picked. For
-  precisely \(N_E\) edges, there are \({{n \choose 2} \choose m}\) ways to
-  arange the \(N_{E}\) edges among the \({N_V \choose 2}\) possible edges.
-  Thus, total probability of a random graph \(G\) with \(N_{E}\) edges and
-  \(N_{V}\) vertices is
+  \[P(G = g) = p^{N_E}(1 - p)^{\left({N_V \choose 2} - N_E \right)}\] of
+  being picked. For precisely \(N_E\) edges, there are
+  \({{n \choose 2} \choose m}\) ways to arange the \(N_{E}\) edges among
+  the \({N_V \choose 2}\) possible edges. Thus, total probability of a
+  random graph \(G\) with \(N_{E}\) edges and \(N_{V}\) vertices is
   
-  \[P(N_E) = {{n \choose 2} \choose m}p^{N_E}(1 - p)^{{N_V \choose 2} - N_E}\]
+  \[P(G) = {{n \choose 2} \choose m}p^{N_E}(1 - p)^{{N_V \choose 2} - N_E}\]
   This, however, is simply a binomial distribution, where we have some
   probability of success (\(p\)), two possible outcomes (edge formation or
   no edge formation), a finite number of trials (\({N_{V} \choose 2}\)
@@ -832,37 +833,44 @@ current work in progress.
   \[c = \langle N_{V} \rangle = \sum_{N_{E}=0}^{{n \choose 2}} \frac {2N_{E}} {N_{V}} P(N_{E}) = \frac {2} {N_{V}} {N_{V} \choose 2}p = (N_{V} - 1)p\]
   The right-hand side of this equation makes sense; for any vertex on the
   random graph, we would expect \(100p\) percent of the other
-  \(N_{V} - 1\) vertices to be connected to it.
+  \(N_{V} - 1\) vertices to be connected to it (Newman 2010).
   
   We can also describe the distribution of the \(G(N_V, p)\). We show it
   is a binomial distribution, and that it actually converges to the
-  Poisson distribution as the number of vertices \{N\_V\} increases. To
-  see this, observe that the probability, \(p_k\), of a vertex connected
-  \(k\) other vertices (without loops) is:
+  Poisson distribution as the number of vertices \(N_{V}\) increases
+  infinitely. To see this, observe that the probability, \(p_k\), of a
+  vertex connected \(k\) other vertices (without loops) is:
   
   \[p_{k} = {N_{V} -1 \choose k}p^{k}(1 - p)^{N_{V} - 1 - k}.\]
   
   Consider the equation for the mean number of edges:
   \(c = (N_{V} - 1)p\). Rewriting this for \(p\) gives,
-  \(p = \frac {c} {N_{V}-1}\). This tells us that as the number of nodes
+  \(p = \frac {c} {N_{V} - 1}\). This tells us that as the number of nodes
   increases, the probability \(p\) will decrease to \(0\) indefinitely.
   Using, this, we can rewrite the \((1 - p)^{N_{V} - 1 - k}\) factor of
   the equation for \(p_{k}\) above as the solution to the limit as
-  \(n \to \infty\)
+  \(N_{V} \to \infty\)
   
-  \[e^{ln((1 - p)^{N_{V} - 1 - k})} = e^{N_{V} - 1 - k}ln(1 - \frac {c} {n - 1}) \simeq e^{-(n - 1 - k)(\frac {c} {n - 1})} \simeq e^{-c}\]
+  \[(1 - p)^{N_{V} - 1 - k} = e^{ln((1 - p)^{N_{V} - 1 - k})} = e^{N_{V} - 1 - k}ln(1 - \frac {c} {n - 1}) \simeq e^{-(n - 1 - k)(\frac {c} {n - 1})} \simeq e^{-c},\]
   where we have expanded the natural logarithm as a Taylor series. These
   approximations become more exact as \(n \to \infty\).
   
   Similarly, we can take the limit as \(n \to \infty\) for the
   \({N_{V} - 1 \choose k}\) factor of the \(p_k\) probability.
   
-  \[{N_{V} - 1 \choose k} = ()\]
+  \[{N_{V} - 1 \choose k} = \frac {(N_{V} - 1)!} {(N_{V} - 1 - k)!k!} = \frac {(N_{V} - 1)^{k}} {k!}.\]
+  
+  Combining these two equations and \(p = \frac {c} {N_{V} - 1}\), the
+  probability \(p_{k}\) becomes
+  
+  \[p_{k} = {N_{V} -1 \choose k}p^{k}(1 - p)^{N_{V} - 1 - k} = \frac {(N_{V} - 1)^{k}} {k!}\left(\frac {c} {N_{V} - 1}\right)^{k}e^{-c} = e^{-c} \frac{c^{k}} {k!}\]
+  as \(N_{V} \to \infty\). This equation is actually the Poisson
+  distribution.
   
   To use this model in our simulation study, we simply take the number of
-  nodes and the probability of a link forming equal to the number of
-  observed edges divided by the number of possible edges (the number of
-  nodes choose 2). That is, \(\frac{N_{E}} {{N_{V} \choose 2}}\). \}
+  nodes, \(N_{V}\), and the probability of a link forming, which equal to
+  the number of observed edges divided by the number of possible edges,
+  that is, \(\frac{N_{E}} {{N_{V} \choose 2}}\).
   
   \section{Watts-Strogatz}\label{watts-strogatz}
   
@@ -879,7 +887,8 @@ current work in progress.
   beginning neighbors for each node, \(r\), and the probability, \(p\), of
   an edge being moved to another pair of vertices. A varient of this
   model, which we will use instead, sets \(p = 0\) and adds random edges
-  randomly that connect vertices that did not have an edge before.
+  randomly that connect vertices that did not have an edge before (Newman
+  2010).
   
   In a regular lattice with \(10\) nodes, each having two neighbors, the
   clustering coefficient is relatively high at exactly \(0.5\). Diameter
@@ -928,7 +937,7 @@ current work in progress.
   graphs from the underlying probability distribution like in the
   Erdős-Rényi and Watts-Strogatz models, but we are also able to obtain
   maximum-likelihood estimates of the model for the data set, conduct
-  goodness-of-fit tests for model assessment.
+  goodness-of-fit tests for model assessment (Hunter et al. 2008a).
   
   The general form for an ERGM is as follows:
   
@@ -942,7 +951,12 @@ current work in progress.
   numerator summed over all possible networks. The
   \(\theta^{T}\textbf{g(y)}\) is a polynomial of coefficients \(\theta\)
   and statistics \(g(y)\). This statistics could be things such as the
-  number of edges or triangles of a graph in question. The denominator
+  number of edges or triangles of a graph in question. The \(\theta\)
+  parameters are interpreted as the log odds of an individual tie
+  conditional on all the others (Hunter et al. 2008a, Butts et al. 2015,
+  Jackson 2013).
+  
+  The denominator
   
   \[\kappa(\theta, \mathcal{Y}) = \sum_{z \in \mathcal{Y}}^{} exp(\theta^{T}\textbf{g(y)})\]
   
@@ -963,8 +977,26 @@ current work in progress.
   distribution:
   
   \[P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g) + \theta_{T}T(g)+\theta_{K}K(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g) + \theta_{T}T(g)+\theta_{K}K(g))}, g \in \mathcal{G} \]
-  Adding a mapping; scripted Y is the ensemble, Y is random variable, y is
-  the specific matrix Estimating thetas Maximum likelihood And MCMC
+  The statsitcs used to build an ERGM are either \emph{dyad independent}
+  or \emph{dyad dependent} terms. Dyad independent terms (such as edges
+  between nodes, \(L(g)\)) imply no dependence between the edges of other
+  nodes. Thus, the presense or absense of an edge between vertices does
+  not affect and is not affected by the presence and absense of other
+  edges. On the other hand, dyad dependent terms (such as triangles,
+  \(T(g)\) and k-stars \(K(g)\)) do imply dependence among edged in the
+  graph; the absense of a link does affect the triangle and k-star counts.
+  In order to calculate the \(\theta\) parameters, ERGMs implement an
+  estimation algorihm. If the model only contains dyad independent terms,
+  the algorithm is simply maximum log-likelihood estimation, in which we
+  find the value that maximizes the log-probability model. However, if the
+  ERGM contains dyad dependent terms, it can be impossible to find a
+  closed form of the probability model and so we would be unable to use
+  estimate the parameters by maximixing the log-likelihood function.
+  Instead, we turn to a new method of estimation, called \emph{Markov
+  chain Monte Carlo (MCMC)}. In short, we estimate the parameters via
+  simulation rather than precise calculation (Butts et al. 2015). See
+  Gilks, Richardson, \& Spiegelhalter (1995) for more information about
+  MCMC.
   
   \subsection{Deriving the Erdős-Rényi Model from
   ERGMs}\label{deriving-the-erdos-renyi-model-from-ergms}
@@ -973,12 +1005,31 @@ current work in progress.
   ERGMs. Here, we will show that the Erdős-Rényi model can be derived from
   an ERGM that only takes into acount the number of edges in a graph.
   
-  Suppose we have a graph \(G\) and the only statsitic we have is L(G),
-  the number of edges in G. Our probability model is thus
+  Suppose we have a particular graph \(g\) and the only statsitic we have
+  is L(G), the number of edges in \(g\). Our probability model is thus
   
-  \[P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g))}, g \in \mathcal{G} \]
-  Consider the probability distribution for the Erdős-Rényi model, as seen
-  below.
+  \[P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g'))}, g \in \mathcal{G}.\]
+  Consider the probability distribution for a particular graph \(g\) with
+  \(N_E\) edges again (from the Erdős-Rényi model). Using the fact that
+  \(N_{V} = L(g)\), taking the equation as a power of base \(e\), we get
+  the following:
+  
+  \[
+  \begin{aligned}
+  P(g) &= p^{N_E}(1 - p)^{\left({N_V \choose 2} - N_E \right)} \\
+  &= p^{L(g)}(1 - p)^{\left(\frac {N_{V}(N_{V} - 1)} {2} - L(g) \right)} \\
+  &= \left( \frac {p} {1-p} \right)^{L(g)}(1 - p)^{\frac {N_{V}(N_{V} - 1)} {2}} \\
+  &= exp \left(L(g)log \left(\frac {p} {1-p} \right) - \frac {N_{V}(N_{V} - 1)} {2} log \left( \frac {p} {1-p} \right) \right) \\
+  &= exp(\theta_{L}L(g) - c) \\
+  &= \frac {exp(\theta_{L}L(g))} {exp(c)}
+  \end{aligned} 
+  \] where
+  \(c = \frac {N_{V}(N_{V} - 1)} {2} ln \left( \frac {p} {1-p} \right)\)
+  is the normalizing constant \(\kappa(\theta, \mathcal{Y})\) seen in the
+  general form of an ERGM and exactly the the denominator
+  \(\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g'))\) seen in the ERGM
+  that fits a graph \(g\) with only the edge statistic \(L(g)\) (Hunter et
+  al. 2008a \& Jackson 2013)
   
   \chapter{Simulation Study}\label{simulation-study}
   
@@ -1007,11 +1058,10 @@ current work in progress.
   friendships. The first column of values in Table 3.1 below describes
   some characteristics of this network. We use the \texttt{igraph},
   \texttt{sna}, \texttt{network}, \texttt{ergm}, \texttt{statnet} packages
-  in our study. Please see, Csárdi \& Nepusz (2006), Carter T Butts \&
-  others (2008), Carter T. Butts (2015), Carter T. Butts (2008), Handcock
-  et al. (2017), Hunter et al. (2008), Handcock et al. (2016), Handcock,
-  Hunter, Butts, Goodreau, \& Morris (2008), and Bojanowski (2015) for
-  more details.
+  in our study. Please see, Csárdi \& Nepusz (2006), C. T. Butts \& others
+  (2008), Butts (2015), Butts (2008), Handcock et al. (2017), D. R. Hunter
+  et al. (2008), Handcock et al. (2016), Handcock, Hunter, Butts,
+  Goodreau, \& Morris (2008), and Bojanowski (2015) for more details.
   
   \begin{figure}[htbp]
   \centering
@@ -1077,11 +1127,6 @@ current work in progress.
   model.
   
   \subsection{Using ERGMs}\label{using-ergms}
-  
-  At the time of this writing, I am still currently working on the code
-  for this section of the simulation study. A description of random graph
-  construction and results, along with an associated code chuck will be
-  included in the thesis submission of this project.
   
   \clearpage
   
@@ -1448,7 +1493,7 @@ current work in progress.
   \KeywordTok{setwd}\NormalTok{(}\StringTok{"~/STAT495-Lee/LeeThesis/data"}\NormalTok{)}
   
   \CommentTok{#edge list}
-  \NormalTok{facebookcombined <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\KeywordTok{gzfile}\NormalTok{(}\StringTok{"facebook_combined.txt.gz"}\NormalTok{), }\DataTypeTok{header=}\NormalTok{F)}
+  \NormalTok{facebookcombined <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\KeywordTok{gzfile}\NormalTok{(}\StringTok{"facebook_combined.txt.gz"}\NormalTok{), }\DataTypeTok{header =} \NormalTok{F)}
   
   \CommentTok{#igraph object}
   \NormalTok{fbel <-}\StringTok{ }\KeywordTok{graph.data.frame}\NormalTok{(facebookcombined)}
@@ -1688,6 +1733,10 @@ current work in progress.
   Gilbert, E. N. (1959). Random graphs. \emph{The Annals of Mathematical
   Statistics}, \emph{30}(4), 1141--1144.
   
+  \hypertarget{ref-gilks1995markov}{}
+  Gilks, W. R., Richardson, S., \& Spiegelhalter, D. (1995). \emph{Markov
+  chain monte carlo in practice}. CRC press.
+  
   \hypertarget{ref-statnetpackagearticle}{}
   Handcock, M. S., Hunter, D. R., Butts, C. T., Goodreau, S. M., \&
   Morris, M. (2008). Statnet: Software tools for the representation,
@@ -1709,11 +1758,22 @@ current work in progress.
   data}. The Statnet Project (\url{http://www.statnet.org}). Retrieved
   from \url{CRAN.R-project.org/package=statnet}
   
+  \hypertarget{ref-hunter_ergm:_2008}{}
+  Hunter, D. R., Handcock, M. S., Butts, C. T., Goodreau, S. M., \&
+  Morris, M. (2008). Ergm: A Package to Fit, Simulate and Diagnose
+  Exponential-Family Models for Networks. \emph{J Stat Softw},
+  \emph{24}(3), nihpa54860. Retrieved from
+  \url{http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2743438/}
+  
   \hypertarget{ref-ergmpackagearticle}{}
   Hunter, D. R., Handcock, M. S., Butts, C. T., Goodreau, S. M., Morris,
   \& Martina. (2008). Ergm: A package to fit, simulate and diagnose
   exponential-family models for networks. \emph{Journal of Statistical
   Software}, \emph{24}(3), 1--29.
+  
+  \hypertarget{ref-jacksonergms2013}{}
+  Jackson, M. O. (2013). Social and economic networks: Models and
+  analysis. Stanford University; Coursera Course Lecture.
   
   \hypertarget{ref-kolaczyk_statistical_2009}{}
   Kolaczyk, E. D. (2009). \emph{Statistical Analysis of Network Data:
