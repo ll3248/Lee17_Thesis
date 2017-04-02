@@ -17,6 +17,8 @@ This simulation study only scratches the surface of what network science has to 
 If you feel it necessary to include an appendix, it goes here.
 -->
 
+\singlespacing
+
 \appendix
 
 # R/R-Markdown Code

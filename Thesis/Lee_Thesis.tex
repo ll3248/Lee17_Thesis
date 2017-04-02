@@ -48,7 +48,7 @@
 
 % \usepackage{times} % other fonts are available like times, bookman, charter, palatino
 
-\title{A Simulation Study in using Random Graph Models to fit Social Networks}
+\title{A Simulation Study using Random Graph Models to fit Social Networks}
 \author{Levi Lee}
 % The month and year that you submit your FINAL draft TO THE LIBRARY (May or December)
 \date{April 03, 2017}
@@ -252,6 +252,8 @@ current work in progress.
   \mainmatter % here the regular arabic numbering starts
   \pagestyle{fancyplain} % turns page numbering back on
 
+  \onehalfspacing
+  
   \chapter*{Introduction}\label{introduction}
   \addcontentsline{toc}{chapter}{Introduction}
   
@@ -729,13 +731,16 @@ current work in progress.
   \[\{\mathbb{P}_{\theta}(G), G \in \mathcal{G}: \theta \in \Theta\}\]
   
   in which \(G\) is a collection or ensemble of possible graphs,
-  \(P_\theta\) is a probability distribution on \(G\), and \(\theta\) is a
-  vector of parameters, ranging over possible parameters in \(\Theta\).
+  \(P_\theta\) is a \emph{probability distribution} on \(G\) (that is, a
+  function that assigns a value for very possible graph that G can be,
+  whose total sums to \(1\)), and \(\theta\) is a vector of parameters
+  that describe the graphs that G can be, ranging over possible parameters
+  in \(\Theta\).
   
   Many of the explanations and derivations for the Erdős-Rényi and
-  Watts-Strogatz networks here follow from Newman (2010). The section
-  about exponential random graph models (ERGMs) follow largely from C.
-  Butts et al. (2015).
+  Watts-Strogatz networks here follow from Newman (2010). Much of the
+  explanations about exponential random graph models (ERGMs) follow
+  largely from C. Butts et al. (2015).
   
   \section{Erdős-Rényi}\label{erdos-renyi}
   
@@ -757,7 +762,13 @@ current work in progress.
   the number of edges. Erdős and Rényi (1959, 1960, 1964) considered the
   model of the form \(G(N_{V}, p)\), where instead of using the number of
   edges, the probability of an edge forming between any pairs of nodes is
-  fixed. Our focus is on the latter model.
+  fixed. Our focus is on the latter model. It is clear that, on average,
+  the \(G(N_{V}, p)\) model would comprise of many more networks than the
+  \(G(N_V, N_E)\) model, as the number edges is not fixed. This allows us
+  to consider a larger number of networks with similar network statistics
+  seen in Chapter 1. However, while unlikely, it is possible to obtain a
+  graph with no edges or all possible edges from the \(G(N_{V}, p)\)
+  model.
   
   \begin{figure}[htbp]
   \centering
@@ -773,14 +784,14 @@ current work in progress.
   particular ensemble have equal probability of being chosen. We
   immediately see a drawback in graphs generated from this model: it
   places no significance on structures that we may see in our observed
-  graph--such as dense clusters or cliques.
+  social networks--such as having high clustering, cliques, and connected
+  components.
   
   In spite of this, the Erdős-Rényi model has very nice properties, some
   of which we discuss here. Even with only two parameters \(N_{V}\) and
   \(p\) on hand, we can still create formulas that allow us to calculate
   various network statistics, such as average degree and clustering
-  coefficient, and describe the model's degree distribution and giant
-  component.
+  coefficient, and describe the model's degree distribution.
   
   As we have mentioned earlier, \(G(N_V, p)\) model is the collection of
   simple graphs with exactly \(n\) vertices, meaning that any simple graph
@@ -792,7 +803,7 @@ current work in progress.
   Thus, total probability of a random graph \(G\) with \(N_{E}\) edges and
   \(N_{V}\) vertices is
   
-  \[P(N_E) = {{n \choose 2} \choose m}p^{N_E}(1 - p)^{{N_V \choose 2} - N_E)}\]
+  \[P(N_E) = {{n \choose 2} \choose m}p^{N_E}(1 - p)^{{N_V \choose 2} - N_E}\]
   This, however, is simply a binomial distribution, where we have some
   probability of success (\(p\)), two possible outcomes (edge formation or
   no edge formation), a finite number of trials (\({N_{V} \choose 2}\)
@@ -826,25 +837,51 @@ current work in progress.
   We can also describe the distribution of the \(G(N_V, p)\). We show it
   is a binomial distribution, and that it actually converges to the
   Poisson distribution as the number of vertices \{N\_V\} increases. To
-  see this, observe that the probability \(p_k\) of
+  see this, observe that the probability, \(p_k\), of a vertex connected
+  \(k\) other vertices (without loops) is:
+  
+  \[p_{k} = {N_{V} -1 \choose k}p^{k}(1 - p)^{N_{V} - 1 - k}.\]
+  
+  Consider the equation for the mean number of edges:
+  \(c = (N_{V} - 1)p\). Rewriting this for \(p\) gives,
+  \(p = \frac {c} {N_{V}-1}\). This tells us that as the number of nodes
+  increases, the probability \(p\) will decrease to \(0\) indefinitely.
+  Using, this, we can rewrite the \((1 - p)^{N_{V} - 1 - k}\) factor of
+  the equation for \(p_{k}\) above as the solution to the limit as
+  \(n \to \infty\)
+  
+  \[e^{ln((1 - p)^{N_{V} - 1 - k})} = e^{N_{V} - 1 - k}ln(1 - \frac {c} {n - 1}) \simeq e^{-(n - 1 - k)(\frac {c} {n - 1})} \simeq e^{-c}\]
+  where we have expanded the natural logarithm as a Taylor series. These
+  approximations become more exact as \(n \to \infty\).
+  
+  Similarly, we can take the limit as \(n \to \infty\) for the
+  \({N_{V} - 1 \choose k}\) factor of the \(p_k\) probability.
+  
+  \[{N_{V} - 1 \choose k} = ()\]
   
   To use this model in our simulation study, we simply take the number of
   nodes and the probability of a link forming equal to the number of
   observed edges divided by the number of possible edges (the number of
-  nodes choose 2). That is, \(\frac{N_{E}} {{N_{V} \choose 2}}\).
+  nodes choose 2). That is, \(\frac{N_{E}} {{N_{V} \choose 2}}\). \}
   
   \section{Watts-Strogatz}\label{watts-strogatz}
   
-  Watts \& Strogatz (1998) noticed that many networks have high levels of
-  clustering and only require short average path lengths between mode
-  nodes. In the Erdős-Rényi model, simulated graphs of parable magnitude
-  tend to have smaller-than-expected clustering coefficients. In the
-  Watts-Strogatz model, we start with \(N_V\) vertices arranged in a
-  circular fashion, \(r\) number of beginning neighbors for each node, and
-  the probability \(p\) of an edge being moved to another pair of
-  vertices.
+  Watts \& Strogatz (1998) noticed that many networks in real life have
+  high levels of clustering and only require short average path lengths
+  between nodes with high degree. In the Erdős-Rényi model, simulated
+  graphs of parable magnitude tend to have smaller-than-expected
+  clustering coefficients. As we had seen in Milgram's experiment earlier,
+  networks among people are not quite has disconnected as we once thought.
+  If any two people are ever seperated by approximately six people, we
+  have some notion of a ``small-world.'' In the Watts-Strogatz model, we
+  start with several parameters: \(N_V\) vertices, which are arranged in a
+  circular fashion (which we will call a \emph{lattice}), the number of
+  beginning neighbors for each node, \(r\), and the probability, \(p\), of
+  an edge being moved to another pair of vertices. A varient of this
+  model, which we will use instead, sets \(p = 0\) and adds random edges
+  randomly that connect vertices that did not have an edge before.
   
-  In a regular lattice with 10 nodes, each having two neighbors, the
+  In a regular lattice with \(10\) nodes, each having two neighbors, the
   clustering coefficient is relatively high at exactly \(0.5\). Diameter
   and average path length are nontrivial, and can be rather high as well
   (at \(3\) and \(1.667\), respectively).
@@ -853,17 +890,17 @@ current work in progress.
   \centering
   \includegraphics{figure/22wattsstrogatzexample.png}
   \caption{Examples of graphs generated from the Watts-Strogatz model.
-  Both: \(N_V\) = 10\$, \(r = 2\). Left: \(p = 0\). Right: \(p= 0.25\).}
+  Both: \(N_V = 10\), \(r = 2\). Left: \(N_E = 20\). Right: \(N_E = 20\)
+  with \(4\) extra edges.}
   \end{figure}
   
-  By adding a probability of rewiring, the clustering coefficient
-  increases, while diameter and average path length changes, but not
-  necessarily in predictable ways. This makes sense because this rewiring
-  essentially creates random shortcuts in the network framework. In the
-  right-hand graph of Figure 3.2, which is the left-hand graph after a
-  rewiring probability of \(0.25\), we see that the transitivity,
-  diameter, and average path length are now \(0.507\), \(4\), and
-  \(1.733\), respectively.
+  By adding some edges (instead of simply rewiring), the clustering
+  coefficient, diameter, and average path length tend to decrease. This
+  makes sense because this rewiring creates random shortcuts in the
+  network framework. In the right-hand graph of Figure 3.2, which is the
+  left-hand graph after adding \(4\) random edges, we see that the
+  transitivity, diameter, and average path length are now \(0.52\), \(2\),
+  and \(1.467\), respectively.
   
   While it is entirely possible that a network could potentially have such
   a kind of rewiring process, it is less likely that this is true in the
@@ -885,35 +922,63 @@ current work in progress.
   
   Exponential random graph models (ERGMs) are a class of models that can
   also be used to generate probability distributions for a set of random
-  graphs. ERGMs have enormous flexibility in construction since it allows
-  any combinition of parameters from a given data set to be used in
+  graphs. ERGMs have enormous flexibility in construction since they allow
+  any combination of parameters from a given data set to be used in
   constructing the model. We are not only able to simulate additional
   graphs from the underlying probability distribution like in the
   Erdős-Rényi and Watts-Strogatz models, but we are also able to obtain
   maximum-likelihood estimates of the model for the data set, conduct
-  goodness-of-fit tests for
+  goodness-of-fit tests for model assessment.
   
   The general form for an ERGM is as follows:
   
-  \[P(Y = y) = \frac {exp(\theta'g(y))} {k(\theta)}\]
+  \[P_{\theta, \mathcal{Y}}(\textbf{Y} = \textbf{y}) = \frac {exp(\theta^{T}\textbf{g(y)})} {\kappa(\theta, \mathcal{Y})},\textbf{y} \in \mathcal{Y}, \]
   
-  where \(Y\) is the random variable for the state of the network and
-  realization y, \(g(y)\) is the vector of model statistics for the
-  network \(y\), \(\theta\) is the vector of coefficients for those
-  statistics, and \(k(\theta)\) is the quantity in the numerator summed
-  over all possible networks.
+  where \(\textbf{Y}\) is the random variable representing the adjacency
+  matrix of a graph and \(\textbf{y}\) is the particular adjacency matrix
+  we observe. \(\textbf{g(y)}\) is the vector of model statistics for
+  \(\textbf{y}\), \(\theta\) is the vector of coefficients for those
+  statistics, and \(\kappa(\theta, \mathcal{Y})\) is the quantity in the
+  numerator summed over all possible networks. The
+  \(\theta^{T}\textbf{g(y)}\) is a polynomial of coefficients \(\theta\)
+  and statistics \(g(y)\). This statistics could be things such as the
+  number of edges or triangles of a graph in question. The denominator
   
-  At the time of this writing, we are still working on the explanation of
-  properties of ERGMs. This will be included as part of the Mathematics
-  thesis.
+  \[\kappa(\theta, \mathcal{Y}) = \sum_{z \in \mathcal{Y}}^{} exp(\theta^{T}\textbf{g(y)})\]
   
-  \subsection{Deriving Erdős-Rényi-Gilbert from
-  ERGMs}\label{deriving-erdos-renyi-gilbert-from-ergms}
+  serves a normalizing factor so that
+  \(P_{\theta, \mathcal{Y}}(\textbf{Y} = \textbf{y})\) is a proper
+  probability distribution (that is, the values that are outputted are
+  between \(0\) and \(1\)). It is also possible to consider actual graphs
+  themselves instead of their adjacency matrices. So, we can replace
+  \(\textbf{y}\) with an observed graph \(g\), \(\textbf{Y}\) with a
+  random graph \(G\), and \(\mathcal{Y}\) with the ensemble of graphs
+  \(\mathcal{G}\).
   
-  The Erdős-Rényi-Gilbert and Watts-Strogatz models are actually special
-  cases of ERGMs. Here, we will show that the Erdős-Rényi model can be
-  derived from an ERGM that only takes into acount the number of edges in
-  a graph.
+  As an example, consider a graph \(g\) with the following statistics.
+  \(L(g)\) is the number of edges in the graph, \(T(g)\) is the number of
+  triangles, and \(K(g)\) is the number of k-stars.
+  
+  Using an ERGM to fit \(g\) would result in the following probability
+  distribution:
+  
+  \[P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g) + \theta_{T}T(g)+\theta_{K}K(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g) + \theta_{T}T(g)+\theta_{K}K(g))}, g \in \mathcal{G} \]
+  Adding a mapping; scripted Y is the ensemble, Y is random variable, y is
+  the specific matrix Estimating thetas Maximum likelihood And MCMC
+  
+  \subsection{Deriving the Erdős-Rényi Model from
+  ERGMs}\label{deriving-the-erdos-renyi-model-from-ergms}
+  
+  The Erdős-Rényi and Watts-Strogatz models are actually special cases of
+  ERGMs. Here, we will show that the Erdős-Rényi model can be derived from
+  an ERGM that only takes into acount the number of edges in a graph.
+  
+  Suppose we have a graph \(G\) and the only statsitic we have is L(G),
+  the number of edges in G. Our probability model is thus
+  
+  \[P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g))}, g \in \mathcal{G} \]
+  Consider the probability distribution for the Erdős-Rényi model, as seen
+  below.
   
   \chapter{Simulation Study}\label{simulation-study}
   
@@ -947,18 +1012,6 @@ current work in progress.
   et al. (2017), Hunter et al. (2008), Handcock et al. (2016), Handcock,
   Hunter, Butts, Goodreau, \& Morris (2008), and Bojanowski (2015) for
   more details.
-  
-  \begin{Shaded}
-  \begin{Highlighting}[]
-  \KeywordTok{setwd}\NormalTok{(}\StringTok{"~/STAT495-Lee/LeeThesis/data"}\NormalTok{)}
-  
-  \CommentTok{#edge list}
-  \NormalTok{facebookcombined <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\KeywordTok{gzfile}\NormalTok{(}\StringTok{"facebook_combined.txt.gz"}\NormalTok{), }\DataTypeTok{header=}\NormalTok{F)}
-  
-  \CommentTok{#igraph object}
-  \NormalTok{fbel <-}\StringTok{ }\KeywordTok{graph.data.frame}\NormalTok{(facebookcombined)}
-  \end{Highlighting}
-  \end{Shaded}
   
   \begin{figure}[htbp]
   \centering
@@ -1003,50 +1056,6 @@ current work in progress.
   each possible edge among the \(4039\) nodes and determine if an edge
   will form based on the given probability.
   
-  \begin{Shaded}
-  \begin{Highlighting}[]
-  \KeywordTok{set.seed}\NormalTok{(}\DecValTok{499}\NormalTok{)}
-  
-  \NormalTok{numsim <-}\StringTok{ }\DecValTok{1000}
-  
-  \NormalTok{g.er.fbel.ecount <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.er.fbel.coef <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.er.fbel.apl <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.er.fbel.dia <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.er.fbel.avgdeg <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.er.fbel.avgbtwcen <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.er.fbel.avgclocen <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.er.fbel.avgeigveccen <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  
-  \CommentTok{#probability used in for-loop below}
-  \NormalTok{p =}\StringTok{ }\KeywordTok{ecount}\NormalTok{(fbel)/}\KeywordTok{choose}\NormalTok{(}\KeywordTok{vcount}\NormalTok{(fbel), }\DecValTok{2}\NormalTok{)}
-  
-  \NormalTok{for (i in }\DecValTok{1}\NormalTok{:numsim) \{}
-    \CommentTok{# n = number of vertices, p = probability of a link}
-    \CommentTok{#p is caluclated as number of edges over number of possible edges}
-    \CommentTok{#p is then (4039 choose 2) as calculated above }
-    \CommentTok{#igraph object}
-    \NormalTok{g.er.fbel <-}\StringTok{ }\KeywordTok{erdos.renyi.game}\NormalTok{(}\DataTypeTok{n =} \KeywordTok{vcount}\NormalTok{(fbel), p)}
-    
-    \CommentTok{#observe the network statistics for this simulated graph}
-    \NormalTok{g.er.fbel.ecount[i] <-}\StringTok{ }\KeywordTok{ecount}\NormalTok{(g.er.fbel)}
-    \NormalTok{g.er.fbel.coef[i] <-}\StringTok{ }\KeywordTok{transitivity}\NormalTok{(g.er.fbel, }\DataTypeTok{type=}\StringTok{"localaverage"}\NormalTok{)}
-    \NormalTok{g.er.fbel.apl[i] <-}\StringTok{ }\KeywordTok{average.path.length}\NormalTok{(g.er.fbel)}
-    \NormalTok{g.er.fbel.dia[i] <-}\StringTok{ }\KeywordTok{diameter}\NormalTok{(g.er.fbel)}
-    \NormalTok{g.er.fbel.avgdeg[i] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(igraph::}\KeywordTok{degree}\NormalTok{(g.er.fbel))}
-    \NormalTok{g.er.fbel.avgbtwcen[i] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(igraph::}\KeywordTok{betweenness}\NormalTok{(g.er.fbel))}
-    \NormalTok{g.er.fbel.avgclocen[i] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(igraph::}\KeywordTok{closeness}\NormalTok{(g.er.fbel))}
-    \NormalTok{g.er.fbel.avgeigveccen[i] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(igraph::}\KeywordTok{eigen_centrality}\NormalTok{(g.er.fbel)$vector)}
-  \NormalTok{\}}
-  
-  \CommentTok{#save values as dataframe}
-  \NormalTok{g.er.fbel <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(g.er.fbel.ecount, g.er.fbel.coef, }
-                                   \NormalTok{g.er.fbel.apl, g.er.fbel.dia, }
-                                   \NormalTok{g.er.fbel.avgdeg, g.er.fbel.avgbtwcen, }
-                                   \NormalTok{g.er.fbel.avgclocen, g.er.fbel.avgeigveccen))}
-  \end{Highlighting}
-  \end{Shaded}
-  
   \subsection{Using the Watts-Strogatz
   Model}\label{using-the-watts-strogatz-model}
   
@@ -1067,81 +1076,12 @@ current work in progress.
   loops will be infrequent. This makes up one simulated graph from the
   model.
   
-  \begin{Shaded}
-  \begin{Highlighting}[]
-  \KeywordTok{set.seed}\NormalTok{(}\DecValTok{499}\NormalTok{)}
-  
-  \NormalTok{numsim <-}\StringTok{ }\DecValTok{1000}
-  
-  \NormalTok{g.ws.fbel.ecount <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{,numsim)}
-  \NormalTok{g.ws.fbel.coef <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.ws.fbel.apl <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.ws.fbel.dia <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.ws.fbel.avgdeg <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.ws.fbel.avgbtwcen <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.ws.fbel.avgclocen <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  \NormalTok{g.ws.fbel.avgeigveccen <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{, numsim)}
-  
-  \NormalTok{for (i in }\DecValTok{1}\NormalTok{:numsim) \{}
-    \CommentTok{#create a lattice with the same number of vertices as 'fbel'}
-    \CommentTok{#let the starting number of neighbors be }
-     \CommentTok{#equal to the minimum vertex degree of 'fbel'}
-    \NormalTok{g.ws.fbel <-}\StringTok{ }\KeywordTok{watts.strogatz.game}\NormalTok{(}\DataTypeTok{dim =} \DecValTok{1}\NormalTok{, }\DataTypeTok{size =} \KeywordTok{vcount}\NormalTok{(fbel), }
-                                     \DataTypeTok{nei =} \KeywordTok{min}\NormalTok{(}\KeywordTok{degree}\NormalTok{(fbg)), }\DataTypeTok{p =} \DecValTok{0}\NormalTok{)}
-    
-    \CommentTok{#generate list of random vertex values to add edges to lattice}
-    \CommentTok{#each pair in the list represents one random edge}
-    \NormalTok{randomedgepairs <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(}\DecValTok{1}\NormalTok{:}\KeywordTok{vcount}\NormalTok{(fbel), }\DecValTok{2}\NormalTok{*(}\KeywordTok{ecount}\NormalTok{(fbel)-}\KeywordTok{vcount}\NormalTok{(fbel)), }
-                              \DataTypeTok{replace=}\OtherTok{TRUE}\NormalTok{)}
-    \NormalTok{g.ws.fbel.pre <-}\StringTok{ }\KeywordTok{add_edges}\NormalTok{(g.ws.fbel, randomedgepairs)}
-      
-    
-    \CommentTok{#igraph object}
-    \NormalTok{g.ws.fbel <-}\StringTok{ }\KeywordTok{simplify}\NormalTok{(g.ws.fbel.pre)}
-    
-    \CommentTok{#observe the network statistics for this simulated graph}
-    \NormalTok{g.ws.fbel.ecount[i] <-}\StringTok{ }\KeywordTok{ecount}\NormalTok{(g.ws.fbel)}
-    \NormalTok{g.ws.fbel.coef[i] <-}\StringTok{ }\KeywordTok{transitivity}\NormalTok{(g.ws.fbel, }\DataTypeTok{type=}\StringTok{"localaverage"}\NormalTok{)}
-    \NormalTok{g.ws.fbel.apl[i] <-}\StringTok{ }\KeywordTok{average.path.length}\NormalTok{(g.ws.fbel)}
-    \NormalTok{g.ws.fbel.dia[i] <-}\StringTok{ }\KeywordTok{diameter}\NormalTok{(g.ws.fbel)}
-    \NormalTok{g.ws.fbel.avgdeg[i] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(igraph::}\KeywordTok{degree}\NormalTok{(g.ws.fbel))}
-    \NormalTok{g.ws.fbel.avgbtwcen[i] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(igraph::}\KeywordTok{betweenness}\NormalTok{(g.ws.fbel))}
-    \NormalTok{g.ws.fbel.avgclocen[i] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(igraph::}\KeywordTok{closeness}\NormalTok{(g.ws.fbel))}
-    \NormalTok{g.ws.fbel.avgeigveccen[i] <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(igraph::}\KeywordTok{eigen_centrality}\NormalTok{(g.ws.fbel)$vector)}
-  \NormalTok{\}}
-  
-  \CommentTok{#save values as dataframe}
-  \NormalTok{g.ws.fbel <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(g.ws.fbel.ecount, g.ws.fbel.coef, }
-                                   \NormalTok{g.ws.fbel.apl, g.ws.fbel.dia, }
-                                   \NormalTok{g.ws.fbel.avgdeg, g.ws.fbel.avgbtwcen, }
-                                   \NormalTok{g.ws.fbel.avgclocen, g.ws.fbel.avgeigveccen))}
-  \end{Highlighting}
-  \end{Shaded}
-  
   \subsection{Using ERGMs}\label{using-ergms}
   
   At the time of this writing, I am still currently working on the code
   for this section of the simulation study. A description of random graph
   construction and results, along with an associated code chuck will be
   included in the thesis submission of this project.
-  
-  \begin{Shaded}
-  \begin{Highlighting}[]
-  \CommentTok{#needs an object of class network}
-  \CommentTok{#this should be the same as Erdős-Rényi}
-  \NormalTok{g.ergm1.fbg <-}\StringTok{ }\KeywordTok{ergm}\NormalTok{(fbg ~}\StringTok{ }\NormalTok{edges)}
-  
-  \KeywordTok{set.seed}\NormalTok{(}\DecValTok{499}\NormalTok{)}
-  \NormalTok{g.ergm1.fbg.sim <-}\StringTok{ }\KeywordTok{simulate}\NormalTok{(g.ergm1.fbg, }\DataTypeTok{numsim=}\DecValTok{1000}\NormalTok{)}
-  
-  
-  
-  \NormalTok{g.ergm2.fbg <-}\StringTok{ }\KeywordTok{ergm}\NormalTok{(fbg ~}\StringTok{ }\NormalTok{edges+triangle)}
-  
-  \KeywordTok{set.seed}\NormalTok{(}\DecValTok{499}\NormalTok{)}
-  \NormalTok{g.ergm2.fbg.sim <-}\StringTok{ }\KeywordTok{simulate}\NormalTok{(g.ergm2.fbg, }\DataTypeTok{numsim=}\DecValTok{1000}\NormalTok{)}
-  \end{Highlighting}
-  \end{Shaded}
   
   \clearpage
   
@@ -1317,6 +1257,8 @@ current work in progress.
   successful simulation study has many implications that can benefit not
   only just network science, but all disciplines.
   
+  \singlespacing
+  
   \appendix
   
   \chapter{R/R-Markdown Code}\label{rr-markdown-code}
@@ -1468,7 +1410,18 @@ current work in progress.
   \KeywordTok{set.seed}\NormalTok{(}\DecValTok{499}\NormalTok{)}
   
   \NormalTok{g1.ws <-}\StringTok{ }\KeywordTok{watts.strogatz.game}\NormalTok{(}\DataTypeTok{dim =} \DecValTok{1}\NormalTok{, }\DataTypeTok{size =} \DecValTok{10}\NormalTok{, }\DataTypeTok{nei =} \DecValTok{2}\NormalTok{, }\DataTypeTok{p =} \DecValTok{0}\NormalTok{)}
-  \NormalTok{g2.ws <-}\StringTok{ }\KeywordTok{watts.strogatz.game}\NormalTok{(}\DataTypeTok{dim =} \DecValTok{1}\NormalTok{, }\DataTypeTok{size =} \DecValTok{10}\NormalTok{, }\DataTypeTok{nei =} \DecValTok{2}\NormalTok{, }\DataTypeTok{p =} \FloatTok{0.25}\NormalTok{)}
+  
+  \NormalTok{g2.ws <-}\StringTok{ }\KeywordTok{watts.strogatz.game}\NormalTok{(}\DataTypeTok{dim =} \DecValTok{1}\NormalTok{, }\DataTypeTok{size =} \DecValTok{10}\NormalTok{, }\DataTypeTok{nei =} \DecValTok{2}\NormalTok{, }\DataTypeTok{p =} \DecValTok{0}\NormalTok{)}
+  \CommentTok{# the effect of adding one edge to the circular arrangement}
+  \NormalTok{randomedgepairs <-}\StringTok{ }\KeywordTok{sample}\NormalTok{(}\DecValTok{1}\NormalTok{:}\DecValTok{10}\NormalTok{, }\DecValTok{8}\NormalTok{, }\DataTypeTok{replace=}\OtherTok{TRUE}\NormalTok{)}
+  \NormalTok{g2.ws <-}\StringTok{ }\KeywordTok{simplify}\NormalTok{(}\KeywordTok{add_edges}\NormalTok{(g2.ws, randomedgepairs))}
+  
+  \KeywordTok{diameter}\NormalTok{(g1.ws)}
+  \KeywordTok{average.path.length}\NormalTok{(g1.ws)}
+  \KeywordTok{transitivity}\NormalTok{(g1.ws, }\DataTypeTok{type =} \StringTok{"localaverage"}\NormalTok{)}
+  \KeywordTok{diameter}\NormalTok{(g2.ws)}
+  \KeywordTok{average.path.length}\NormalTok{(g2.ws)}
+  \KeywordTok{transitivity}\NormalTok{(g2.ws, }\DataTypeTok{type =} \StringTok{"localaverage"}\NormalTok{)}
   \end{Highlighting}
   \end{Shaded}
   
@@ -1478,8 +1431,8 @@ current work in progress.
   \begin{Shaded}
   \begin{Highlighting}[]
   \KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{))}
-  \KeywordTok{plot}\NormalTok{(g1.ws, }\DataTypeTok{vertex.size=}\DecValTok{20}\NormalTok{, }\DataTypeTok{vertex.label.cex =} \FloatTok{0.75}\NormalTok{)}
-  \KeywordTok{plot}\NormalTok{(g2.ws, }\DataTypeTok{vertex.size=}\DecValTok{20}\NormalTok{, }\DataTypeTok{vertex.label.cex =} \FloatTok{0.75}\NormalTok{)}
+  \KeywordTok{plot}\NormalTok{(g1.ws, }\DataTypeTok{vertex.size =} \DecValTok{20}\NormalTok{, }\DataTypeTok{vertex.label.cex =} \FloatTok{0.75}\NormalTok{)}
+  \KeywordTok{plot}\NormalTok{(g2.ws, }\DataTypeTok{vertex.size =} \DecValTok{20}\NormalTok{, }\DataTypeTok{vertex.label.cex =} \FloatTok{0.75}\NormalTok{, }\DataTypeTok{layout=}\NormalTok{layout_in_circle)}
   \end{Highlighting}
   \end{Shaded}
   

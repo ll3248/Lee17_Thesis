@@ -88,13 +88,21 @@ For a graph with exactly $N_{E}$ edges, it is easy to see that the mean degree i
 $$c = \langle N_{V} \rangle = \sum_{N_{E}=0}^{{n \choose 2}} \frac {2N_{E}} {N_{V}} P(N_{E}) = \frac {2} {N_{V}} {N_{V} \choose 2}p = (N_{V} - 1)p$$
 The right-hand side of this equation makes sense; for any vertex on the random graph, we would expect $100p$ percent of the other $N_{V} - 1$ vertices to be connected to it. 
 
-We can also describe the distribution of the $G(N_V, p)$. We show it is a binomial distribution, and that it actually converges to the Poisson distribution as the number of vertices {N_V} increases. To see this, observe that the probability $p_k$ of
+We can also describe the distribution of the $G(N_V, p)$. We show it is a binomial distribution, and that it actually converges to the Poisson distribution as the number of vertices {N_V} increases. To see this, observe that the probability, $p_k$, of a vertex connected $k$ other vertices (without loops) is: 
 
+$$p_{k} = {N_{V} -1 \choose k}p^{k}(1 - p)^{N_{V} - 1 - k}.$$
 
+Consider the equation for the mean number of edges: $c = (N_{V} - 1)p$. Rewriting this for $p$ gives, $p = \frac {c} {N_{V}-1}$. This tells us that as the number of nodes increases, the probability $p$ will decrease to $0$ indefinitely. Using, this, we can rewrite the $(1 - p)^{N_{V} - 1 - k}$ factor of the equation for $p_{k}$ above as the solution to the limit as $n \to \infty$
 
+$$e^{ln((1 - p)^{N_{V} - 1 - k})} = e^{N_{V} - 1 - k}ln(1 - \frac {c} {n - 1}) \simeq e^{-(n - 1 - k)(\frac {c} {n - 1})} \simeq e^{-c}$$
+where we have expanded the natural logarithm as a Taylor series. These approximations become more exact as $n \to \infty$. 
+
+Similarly, we can take the limit as $n \to \infty$ for the ${N_{V} - 1 \choose k}$ factor of the $p_k$ probability.
+
+$${N_{V} - 1 \choose k} = ()$$
 
 To use this model in our simulation study, we simply take the number of nodes and the probability of a link forming equal to the number of observed edges divided by the number of possible edges (the number of nodes choose 2). That is, $\frac{N_{E}} {{N_{V} \choose 2}}$.
-
+}
 
 ## Watts-Strogatz
 
@@ -164,13 +172,4 @@ Suppose we have a graph $G$ and the only statsitic we have is L(G), the number o
 
 $$P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g))}, g \in \mathcal{G} $$
 Consider the probability distribution for the Erdős-Rényi model, as seen below. 
-
-$$
-\begin{align}
-\mathcal{L}^{-1}\left\{f(d)\right\} 
-& = \mathcal{L}^{-1}\left\{f_1(\delta).f_2(\delta)\right\} \\
-& = \exp(mt) \star \left\{\frac{l}{2\sqrt{\pi t^3}} \exp(-l^2/{4t})\right\} \\
-& = F_1 * F_2
-\end{align}
-$$
 

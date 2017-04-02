@@ -1,6 +1,6 @@
 ---
 author: 'Levi Lee'
-date: 'April 03, 2017'
+date: 'April 05, 2017'
 division: 'Statistics'
 advisor: 'Amy Wagaman'
 department: 'Mathematics and Statistics'
@@ -67,6 +67,7 @@ options(xtable.comment = FALSE)
 options(digits = 4)
 ```
 
+\onehalfspacing
 
 <!--
 This is the way to split your thesis into chapters and then include each of the chapters seperately.  You can Knit the Rmd files corresponding to each chapter individually and then put them all back together by Knit-ing this document.
