@@ -4,7 +4,7 @@ date: 'April 05, 2017'
 division: 'Statistics'
 advisor: 'Amy Wagaman'
 department: 'Mathematics and Statistics'
-title: 'A Simulation Study using Random Graph Models to fit Social Networks'
+title: 'A Simulation Study Using Random Graph Models to Fit Social Networks'
 abstract: >
   `r paste(readLines('abstract.Rmd'), collapse = '\n')`
 # If you'd rather include the preliminary content in files instead of inline
