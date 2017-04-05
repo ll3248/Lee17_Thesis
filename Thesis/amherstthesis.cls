@@ -297,24 +297,7 @@
     \null\vfil
     {\fontsize{12}{14}\selectfont \@title}
     \vfil
-    \centerline{\hbox to \wd0 {\hbox{}\hrulefill\hbox{}}}
-    \vfil
-    A Comprehensive Evaluation Report \\
-    Presented to \\
-    \@thefaculty \\
-    Amherst College
-    \vfil
-    \centerline{\hbox to \wd0 {\hbox{}\hrulefill\hbox{}}}
-    \vfil
-    In Partial Fulfillment \\
-    of the Requirements for the Degree \\
-    Bachelor of Arts\\
-    in\\
-    Statistics
-    \vfil
-    \centerline{\hbox to \wd0 {\hbox{}\hrulefill\hbox{}}}
-    \bigskip
-    \centerline{}
+
     \bigskip
     {\fontsize{12}{14}\selectfont \lineskip .75em
     \begin{tabular}[t]{c}%
@@ -322,6 +305,25 @@
     \end{tabular}\par}
     \vskip 1.5em
     {\fontsize{12}{14}\selectfont \@date \par}
+    \bigskip
+
+    \vfil
+    Submitted to the \\
+    Department of Mathematics and Statistics \\
+    of Amherst College\\
+    in partial fulfillment of the requirements\\
+    for the degree of\\
+    Bachelor of Arts with honors
+    \vfil
+    
+    \vfil
+    Faculty Advisor: Amy Wagaman
+    \vfil
+    
+    \vfil
+    Copyright \textcopyright  2017 Levi Lee
+    \vfil
+    
   \end{center}\par
   \end{titlepage}
 
