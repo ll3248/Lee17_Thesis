@@ -4,7 +4,8 @@ output: pdf_document
 
 # Revisions
 
-Describe corrections here. 
+Two typographical error were corrected throughout the thesis. These changes include turning some letters into in-line mathematical symbols (e.g. "a graph G" versus "a graph $G$"). 
 
-Typographical errors count (change number as we find them):
+There were also three footnote errors that did not display the intended information in the Introduction, Chapter 1, and Chapter 2. 
+
 

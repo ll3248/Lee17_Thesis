@@ -41,9 +41,9 @@ A *graph model* takes in fixed parameters that generate a graph that can vary in
 
 $$\{\mathbb{P}_{\theta}(G), G \in \mathcal{G}: \theta \in \Theta\}$$
 
-in which $G$ is a collection or ensemble of possible graphs, $P_\theta$ is a *probability distribution* on $G$ (that is, a function that assigns a value for very possible graph that G can be, whose total sums to $1$), and $\theta$ is a vector of parameters that describe the graphs that G can be, ranging over possible parameters in $\Theta$ (Kolaczyk 2009, Newman 2010). [^1] 
+in which $G$ is a collection or ensemble of possible graphs, $P_\theta$ is a *probability distribution* on $G$ (that is, a function that assigns a value for very possible graph that G can be, whose total sums to $1$), and $\theta$ is a vector of parameters that describe the graphs that G can be, ranging over possible parameters in $\Theta$ (Kolaczyk 2009, Newman 2010). [^3] 
 
-[^1]: Many of the explanations and derivations for the Erdős-Rényi and Watts-Strogatz networks here follow from @newman_networks:_2010. Much of the explanation about exponential random graph models (ERGMs) follows largely from @butts_introduction_2015, @hunter_ergm:_2008, and @jacksonergms2013. 
+[^3]: Many of the explanations and derivations for the Erdős-Rényi and Watts-Strogatz networks here follow from @newman_networks:_2010. Much of the explanation about exponential random graph models (ERGMs) follows largely from @butts_introduction_2015, @hunter_ergm:_2008, and @jacksonergms2013. 
 
 ## Erdős-Rényi Model
 

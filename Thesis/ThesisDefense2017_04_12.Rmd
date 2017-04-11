@@ -1,0 +1,188 @@
+---
+title: "A Short Introduction to Networks and Model Comparisons"
+author: |
+ | Levi Lee 
+ | Advisor: Amy Wagaman
+ | Amherst College
+date: April 12, 2017
+
+output:
+  beamer_presentation:
+    theme: "Szeged"
+    colortheme: "orchid"
+    fonttheme: "professionalfonts"
+---
+
+```{r, include=FALSE}
+library(sand)
+library(igraph)
+library(network)
+library(sna)
+library(statnet)
+library(ergm)
+library(xtable)
+library(mdsr)
+library(gridExtra)
+
+options(xtable.comment = FALSE)
+```
+
+# Background
+
+# A Highly Connected World 
+
+ - Networks are everywhere 
+
+ - Technological, biological, social, informational 
+
+# History 
+
+Travers & Milgram (1967)
+  
+ - Letter correspondence between strangers in Nebraska and Massachusetts 
+  
+ - Overall, it took only around six people for the letter to be delivered 
+  
+ - "Six degrees of separation"
+
+# Social Networks
+
+ - Involves a lot of people 
+
+ - Highly condensed groups
+
+ - Relatively short distances between people 
+
+# Question
+
+ - Can we simulate this? 
+
+# Basic Definitons 
+
+ - A *graph*, denoted $G(V, E)$, consists of a set of *vertices* $i, j, k, ... \in V$ and a set of *edges* $\{i, j\}, \{j, k\}... \in E$. 
+ 
+ - *Order*: number of vertices in $G$, denoted $|V| = N_V $ 
+ 
+ - *Size* : number of edges in $G$, denoted $|E| = N_E$.
+
+ - Our focus is on *simple*, *undirected*, and *connected* graphs. 
+
+# Other Representations of Graphs
+
+ - *Adjacency matrix*: denoted $\textbf{A}$ is an $N_V$ x $N_V$ matrix each element denotes the exitence of edges between pairs of vertices such that 
+
+\[ A_{ij} = \begin{cases}
+    1 & \text{if } \{i, j\} \in E \\
+    0 & \text{otherwise.} 
+  \end{cases}
+\]
+
+ - *Edge list*: two-column list of all the edges in a graph denoted by their corresponding vertices present
+
+# Example: Karate Club of Zachary (1977) 
+
+```{r, echo=FALSE, fig.height=5, fig.align='center'}
+data(karate)
+plot(karate)
+```
+
+# Example: Lazega's Law Firm (1999)
+
+```{r lawyerplot, message = FALSE, eval = FALSE, fig.align='center', echo = FALSE}
+# Office location indicated by color.
+colbar <- c("red", "dodgerblue", "goldenrod")
+v.colors <- colbar[V(lazega)$Office]
+# Type of practice indicated by vertex shape.
+v.shapes <- c("circle", "square")[V(lazega)$Practice]
+# Vertex size proportional to years with firm.
+v.size <- 3.5*sqrt(V(lazega)$Years)
+# Label vertices according to seniority.
+v.label <- V(lazega)$Seniority
+# Reproducible layout.
+set.seed(42)
+l <- layout.fruchterman.reingold(lazega)
+plot(lazega, layout=l, vertex.color=v.colors,
+     vertex.shape=v.shapes, vertex.size=v.size,
+     vertex.label=v.label)
+```
+
+# Network Statistics 
+
+ - Analogous to statisitcs seen in elementary statistics
+
+ - Characterizes a given network
+
+# Transitivity/Clustering Coefficient
+
+ - Probability that adjacent vertices of a particular vertex are connected
+ 
+ - Ratio of connected triples to all possible triangles in the graph
+   
+ - *Triangle* (or *triad*): three vertices connected by three edges 
+ 
+ - *Connected triple*: three vertices connected by two edges
+
+$$C = \frac {(\text{number of triangles}) \times 3} {\text{number of connected triples}$$
+
+# Distances 
+
+*Average path length*: average of the shortest paths of all distinct pairs of vertices in the network
+
+*Diameter*: longest of all the shortest paths between distinct pairs of vertices
+
+# Example: Karate Club of Zachary (1977) 
+
+[TABLE OF VALUES]
+
+# Example: Lazega's Law Firm
+
+[TABLE OF VALUES]
+
+# Centrality
+
+ - Measure of importance for each vertex in the graph
+ 
+ - Many different types of centralities exist 
+
+# Degree Centrality 
+
+ - Vertices with higher vertex degrees are considered to be more central to the network than those with lower vertex degrees
+
+# Betweenness Centrality 
+
+ - 
+
+# Closeness Centrality 
+
+ - 
+
+# Eigenvector Centrality 
+
+# Example: Karate Club of Zachary (1977) 
+
+# Graph Models 
+
+# Erdős–Rényi Model
+
+# Watts-Strogatz Model 
+
+# ERGMs
+
+# Simulation Study 
+
+# Data Set
+
+# Erdős–Rényi Model
+
+# Watts-Strogatz Model 
+
+# ERGMs
+
+# Conclusion
+
+# Results 
+
+# Implications
+
+# Sources
+
