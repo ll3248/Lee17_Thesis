@@ -1,0 +1,197 @@
+---
+title: "A Short Introduction to Networks and Model Comparisons"
+author: |
+ | Levi Lee 
+ | _
+ | Amy Wagaman
+ | Amherst College
+date: November 16, 2016
+
+output:
+  beamer_presentation:
+    theme: "Boadilla"
+    colortheme: "orchid"
+    fonttheme: "structurebold"
+---
+
+```{r, include=FALSE}
+#output:
+#  beamer_presentation:
+#    theme: "Boadilla"
+#    colortheme: "beaver"
+#    fonttheme: "structurebold"
+
+#output:
+#  pdf_document:
+#    fig_height: 3
+#    fig_width: 10
+#  html_document:
+#    fig_height: 3
+#    fig_width: 5
+#  word_document:
+#    fig_height: 3
+#    fig_width: 5
+
+library(gridExtra)
+library(sand)
+library(igraph)
+library(combinat)
+library(mdsr)
+library(ggplot2)
+library(xtable)
+
+options(xtable.comment = FALSE)
+```
+
+# What is a Network? 
+
+ - Using terminology from graph theory, a graph G = (V, E) is a structure that consists of a set V of vertices (nodes, actors, etc.), and a set E of edges (links, relationships, etc.)
+
+ - Able to display multiple layers of data 
+
+ - Four major groups: technological, biological, social, informational
+
+# Example: Karate Club of Zachary (1977) 
+
+```{r, echo=FALSE, fig.height=5, fig.align='center'}
+data(karate)
+plot(karate)
+```
+
+```{r, include=FALSE}
+vcount(karate) #34 people
+ecount(karate) #78 friednships
+
+average.path.length(karate) #2.4082
+diameter(karate) #13
+transitivity(karate) #0.2556818 clustering coefficent
+```
+
+# Can we simulate this? 
+
+ - What graph models/graph generators will we choose? 
+
+ - What characterstics of the observed graph will we choose to look at?
+
+ - What are some methods to access accuracy? 
+
+# Erdos-Renyi Model
+
+A graph model/generator with two parameters 
+
+ - N: the number of vertices 
+
+ - p: the probability of a link forming between any two pairs of nodes
+
+```{r, echo=FALSE}
+set.seed(490)
+
+numsim <- 100 
+
+g.er.karmod.coef <- rep(NA, numsim)
+g.er.karmod.apl <- rep(NA, numsim)
+g.er.karmod.dia <- rep(NA, numsim)
+
+for (i in 1:numsim) {
+  # n = number of vertices, p = probability of a link
+  #p is caluclated as number of edges over number of possible edges
+  #p is then (34 choose 2) since there is the possibility of a link between
+  g.er.karmod <- erdos.renyi.game(n = vcount(karate), 
+                                  p = (ecount(karate)/choose(vcount(karate), 2)))
+  g.er.karmod.coef[i] <- transitivity(g.er.karmod)
+  g.er.karmod.apl[i] <- average.path.length(g.er.karmod)
+  g.er.karmod.dia[i] <- diameter(g.er.karmod)
+}
+```
+
+```{r, echo=FALSE, fig.align='center', fig.height=4, message=FALSE}
+set.seed(490)
+g.er.karmod1 <- erdos.renyi.game(n = vcount(karate), 
+                                 p = (ecount(karate)/choose(vcount(karate), 2)))
+
+plot(g.er.karmod1)  
+```
+
+# Simulation
+
+```{r, eval=FALSE, echo=FALSE, fig.align='center', fig.height=5, fig.width=5}
+# lattice reference only; does not print 
+par(mfrow=c(1,3))
+hist(g.er.karmod.coef)
+abline(v = transitivity(karate), col="red")
+
+
+hist(g.er.karmod.apl)
+abline(v = average.path.length(karate), col="red")
+
+hist(g.er.karmod.dia)
+abline(v = diameter(karate), col="red")
+```
+
+
+```{r, echo=FALSE, fig.align='center', fig.height=2, fig.width=5, warning=FALSE}
+gplot1 <- ggplot(data = as.data.frame(g.er.karmod.coef), 
+       aes(x = g.er.karmod.coef)) +
+  geom_histogram(binwidth=0.0065, 
+       colour="blue", 
+       fill="lavender") + 
+  geom_vline(xintercept = transitivity(karate), colour="red") + 
+  labs(title="Simulated 
+       Clustering Coefficients") + 
+  xlab("Clustering Coefficient") + 
+  ylab("Frequency") + 
+  theme(legend.position="none", 
+        plot.title = element_text(size=6),
+        axis.text = element_text(size=4),
+        axis.title = element_text(size=4)) 
+
+
+gplot2 <- ggplot(data = as.data.frame(g.er.karmod.apl), aes(x = g.er.karmod.apl)) +
+  geom_histogram(binwidth=0.031,
+                 colour="blue",
+                 fill = "lavender") + 
+  geom_vline(xintercept = average.path.length(karate), colour="red") + 
+  labs(title="Simulated 
+       Average Path Lengths") + 
+  xlab("Average Path Length") +
+  ylab("") + 
+  theme(legend.position="none", 
+        plot.title = element_text(size=6),
+        axis.text = element_text(size=4),
+        axis.title = element_text(size=4)) 
+
+gplot3 <- ggplot(data = as.data.frame(g.er.karmod.dia), aes(x = g.er.karmod.dia)) +
+  geom_histogram(binwidth=0.12,
+                 colour="blue",
+                 fill = "lavender") + 
+  geom_vline(xintercept = diameter(karate), colour="red") + 
+  labs(title="Simulated Diameters") + 
+  xlab("Diameter") + 
+  ylab("") + 
+  theme(legend.position="none", 
+        plot.title = element_text(size=6),
+        axis.text = element_text(size=4),
+        axis.title = element_text(size=4))
+
+grid.arrange(gplot1, gplot2, gplot3, ncol=3)
+```
+
+# What's Next?
+
+Choose a different model!
+
+ - Barabasi-Albert, Watts-Strogatz, ERGMs, R-MAT, HOT, COLD, ... 
+ 
+Look at other properties of networks
+
+ - Degree distributions, centrality measures, hub-like nodes, ...
+ 
+# Sources
+
+Chakrabarti, Deepayan, and Christos Faloutsos. "Graph mining: Laws, generators, and algorithms." ACM computing surveys (CSUR) 38.1 (2006): 2.
+
+Kolaczyk, Eric D. Statistical Analysis of Network Data: Methods and Models. New York: Springer, 2009. Print.
+
+Kolaczyk, Eric D., and Gabor Csardi. Statistical Analysis of Network Data with R. New York: Springer, 2014. Print.
+
+
