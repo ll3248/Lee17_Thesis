@@ -34,6 +34,8 @@ nocite: |
   @erdos1959random
   @erdos1960evolution
   @erdHos1964strength
+  @kolaczyk_statistical_2009
+  @kolaczyk_statistical_2014
   @baumer_modern_2017
 ...
 

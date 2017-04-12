@@ -8,7 +8,7 @@ date: April 12, 2017
 
 output:
   beamer_presentation:
-    theme: "Szeged"
+    theme: "Warsaw"
     colortheme: "orchid"
     fonttheme: "professionalfonts"
 ---
@@ -27,23 +27,19 @@ library(gridExtra)
 options(xtable.comment = FALSE)
 ```
 
-# Background
-
 # A Highly Connected World 
 
  - Networks are everywhere 
 
- - Technological, biological, social, informational 
-
 # History 
 
-Travers & Milgram (1967)
+ - Travers & Milgram (1967)
   
- - Letter correspondence between strangers in Nebraska and Massachusetts 
+   - Letter correspondence between strangers in Nebraska and Massachusetts 
   
- - Overall, it took only around six people for the letter to be delivered 
+   - Overall, it took only around six people for the letter to be delivered 
   
- - "Six degrees of separation"
+   - "Six degrees of separation"
 
 # Social Networks
 
@@ -55,55 +51,34 @@ Travers & Milgram (1967)
 
 # Question
 
- - Can we simulate this? 
-
-# Basic Definitons 
-
- - A *graph*, denoted $G(V, E)$, consists of a set of *vertices* $i, j, k, ... \in V$ and a set of *edges* $\{i, j\}, \{j, k\}... \in E$. 
+ - Can we simulate this? If so, how? 
  
- - *Order*: number of vertices in $G$, denoted $|V| = N_V $ 
- 
- - *Size* : number of edges in $G$, denoted $|E| = N_E$.
+ - Conduct a simulation study utilizing different graph models 
 
+# Basic Terminlogy
+
+ - A *graph*, denoted $G(V, E)$, consists of a set of *vertices* $i, j, k, ... \in V$ and a set of *edges* $\{i, j\}, \{i, k\}, \{j, k\}... \in E$. 
+ 
  - Our focus is on *simple*, *undirected*, and *connected* graphs. 
 
 # Other Representations of Graphs
 
- - *Adjacency matrix*: denoted $\textbf{A}$ is an $N_V$ x $N_V$ matrix each element denotes the exitence of edges between pairs of vertices such that 
+ - *Adjacency matrix*: denoted $\textbf{A}$ is an $N_V$ x $N_V$ matrix where each element denotes the existence of edges between pairs where
 
-\[ A_{ij} = \begin{cases}
+$$
+A_{ij} = \begin{cases}
     1 & \text{if } \{i, j\} \in E \\
     0 & \text{otherwise.} 
   \end{cases}
-\]
+$$
 
  - *Edge list*: two-column list of all the edges in a graph denoted by their corresponding vertices present
 
 # Example: Karate Club of Zachary (1977) 
 
-```{r, echo=FALSE, fig.height=5, fig.align='center'}
+```{r, echo=FALSE, fig.height=4.5, fig.align='center'}
 data(karate)
 plot(karate)
-```
-
-# Example: Lazega's Law Firm (1999)
-
-```{r lawyerplot, message = FALSE, eval = FALSE, fig.align='center', echo = FALSE}
-# Office location indicated by color.
-colbar <- c("red", "dodgerblue", "goldenrod")
-v.colors <- colbar[V(lazega)$Office]
-# Type of practice indicated by vertex shape.
-v.shapes <- c("circle", "square")[V(lazega)$Practice]
-# Vertex size proportional to years with firm.
-v.size <- 3.5*sqrt(V(lazega)$Years)
-# Label vertices according to seniority.
-v.label <- V(lazega)$Seniority
-# Reproducible layout.
-set.seed(42)
-l <- layout.fruchterman.reingold(lazega)
-plot(lazega, layout=l, vertex.color=v.colors,
-     vertex.shape=v.shapes, vertex.size=v.size,
-     vertex.label=v.label)
 ```
 
 # Network Statistics 
@@ -113,31 +88,32 @@ plot(lazega, layout=l, vertex.color=v.colors,
  - Characterizes a given network
 
 # Transitivity/Clustering Coefficient
-
- - Probability that adjacent vertices of a particular vertex are connected
  
- - Ratio of connected triples to all possible triangles in the graph
+ - Ratio of triangles to connected triples
    
- - *Triangle* (or *triad*): three vertices connected by three edges 
+ - *Triangle*: three vertices connected by three edges 
  
  - *Connected triple*: three vertices connected by two edges
 
-$$C = \frac {(\text{number of triangles}) \times 3} {\text{number of connected triples}$$
+ $$C = \frac {(\text{number of triangles}) \times 3} {\text{number of connected triples}}$$
 
-# Distances 
+# Notions of Distance 
 
 *Average path length*: average of the shortest paths of all distinct pairs of vertices in the network
 
 *Diameter*: longest of all the shortest paths between distinct pairs of vertices
 
-# Example: Karate Club of Zachary (1977) 
-
-[TABLE OF VALUES]
-
-# Example: Lazega's Law Firm
-
-[TABLE OF VALUES]
-
+# Example: Karate Club of Zachary and  Lazega's Law Firm
+  -------------------------------------------------------
+  Network Statistic               Zachary's Karate Club 
+  ------------------------------- ---------------------- 
+  Transitivity                    0.256            
+    
+  Average Path Length             2.408     
+  
+  Diameter                        13                    
+  -------------------------------------------------------
+  
 # Centrality
 
  - Measure of importance for each vertex in the graph
@@ -146,43 +122,422 @@ $$C = \frac {(\text{number of triangles}) \times 3} {\text{number of connected t
 
 # Degree Centrality 
 
+ - Based on the number of edges are connected to a vertex 
+
  - Vertices with higher vertex degrees are considered to be more central to the network than those with lower vertex degrees
-
-# Betweenness Centrality 
-
- - 
 
 # Closeness Centrality 
 
- - 
+ - Measures how close a vertex is to other vertices based on the inverse of the total distance of the vertex from all others
+ 
+ $$c_{Cl}(i) = \frac {1} {\sum_{j \in V}^{} d(i, j)}$$
+ 
+ - $dist(i,j)$ is the geodesic distance between the vertices $i,j \in V$
+
+# Betweenness Centrality 
+
+ - Measures the extent to which a vertex is located between other pairs of vertices
+ 
+ $$c_{B}(i) = \sum_{g \neq h \neq i \in V}^{} \frac {\sigma(g,h|i)} {\sigma(g,h)}$$
+
+ - $\sigma(g,h|i)$ is the total number of shortest paths between $g$ and $h$ that pass through $i$, and $\sigma(g,h) = \sum_{i \in V}^{} \sigma(g,h|i)$
 
 # Eigenvector Centrality 
 
+ - Based on the idea of "status," "prestige," or "rank;" the more central the neighbors of a vertex are, the more central that vertex itself is
+ 
+ $$c_{Ei}(i) = \alpha \sum_{\{i,j\} \in E}^{} c_{Ei} (u)$$
+
+ - $c_{Ei} = (c_{Ei}(1), ..., c_{Ei}(N_V))^T$ is the solution to the eigenvalue problem $\textbf{A}\textbf{c}_{Ei} = \alpha^{-1}\textbf{c}_{Ei}$, where $\textbf{A}$ is the adjacency matrix for network graph $G$.
+
 # Example: Karate Club of Zachary (1977) 
+
+```{r, echo = FALSE, fig.align = 'center', warning = FALSE}
+A <- get.adjacency(karate, sparse=FALSE)
+library(network)
+g <- network::as.network.matrix(A)
+library(sna)
+par(mfrow=c(2,2))
+sna::gplot.target(g, degree(g), main="Degree",
+                  circ.lab = FALSE, circ.col="skyblue",
+                  usearrows = FALSE,
+                  vertex.col=c("blue", rep("red", 32), "yellow"),
+                  edge.col="darkgray")
+
+
+sna::gplot.target(g, closeness(g), main="Closeness",
+                  circ.lab = FALSE, circ.col="skyblue",
+                  usearrows = FALSE,
+                  vertex.col=c("blue", rep("red", 32), "yellow"),
+                  edge.col="darkgray")
+
+sna::gplot.target(g, betweenness(g), main="Betweenness",
+                  circ.lab = FALSE, circ.col="skyblue",
+                  usearrows = FALSE,
+                  vertex.col=c("blue", rep("red", 32), "yellow"),
+                  edge.col="darkgray")
+
+sna::gplot.target(g, evcent(g), main="Eigenvector",
+                  circ.lab = FALSE, circ.col="skyblue",
+                  usearrows = FALSE,
+                  vertex.col=c("blue", rep("red", 32), "yellow"),
+                  edge.col="darkgray")
+```
+
+# Example: Karate Club of Zachary
+
+  ----------------------------------------------------
+  Network Statistic         Zachary's Karate Club      
+  ------------------------- -------------------------- 
+  Avg. Degree               4.588                      
+   
+  Avg. Closeness Cen.       0.005                     
+    
+  Avg. Betweenness Cen.     26.194                     
+    
+  Avg. Eigenvector Cen.     0.377                      
+    
+  ------------------------- --------------------------
 
 # Graph Models 
 
-# Erdős–Rényi Model
+ - A *graph model* takes in fixed parameters and generates a graph that vary in structure with each iteration
+ 
+ - Equivalently, it is a collection, or *ensemble* of graphs, denoted by
 
-# Watts-Strogatz Model 
+ $$\{\mathbb{P}_{\theta}(G), G \in \mathcal{G}: \theta \in \Theta\}$$
+ - $\mathcal{G}$ is a collection or ensemble of possible graphs, $P_\theta$ is a *probability distribution* on the random graph $G$, and $\theta$ is a vector of parameters that describe the graphs that $G$ can be, ranging over possible parameters in $\Theta$
 
-# ERGMs
+# Erdős–Rényi Model (1959)
 
-# Simulation Study 
+ - Model with parameters: $N_V$, and $N_{E}$ or $p$
+
+ - Model of the form $G(N_{V}, p)$ and $G(N_{V}, N_{E})$
+
+```{r, fig.align = 'center', eval=TRUE, include = FALSE}
+set.seed(499)
+
+g1.er <- erdos.renyi.game(n = 10, p = 0.25)
+g2.er <- erdos.renyi.game(n = 10, p = 0.25)
+
+par(mfrow=c(1,2))
+plot(g1.er, vertex.size=20, vertex.label.cex = 0.75)
+plot(g2.er, vertex.size=20, vertex.label.cex = 0.75)
+```
+
+# Properties of the Erdős–Rényi Model
+
+ - Short average path lenths
+ 
+ - Low clustering coefficient 
+ 
+ - For the $G(N_V, p)$ model, a particular simple graph $g$ with exactly $N_V$ vertices has probability $P(G = g) = p^{N_E}(1 - p)^{\left({N_V \choose 2} - N_E \right)}$
+
+# Watts-Strogatz Model (1998)
+
+ - Model with parameters: $N_V$, $r$, $p$
+ 
+```{r, echo = FALSE}
+set.seed(499)
+
+g1.ws <- watts.strogatz.game(dim = 1, size = 10, nei = 2, p = 0)
+
+g2.ws <- watts.strogatz.game(dim = 1, size = 10, nei = 2, p = 0)
+# the effect of adding one edge to the circular arrangement
+randomedgepairs <- sample(1:10, 8, replace=TRUE)
+g2.ws <- simplify(add_edges(g2.ws, randomedgepairs))
+
+par(mfrow=c(1,2))
+plot(g1.ws, vertex.size = 20, vertex.label.cex = 0.75)
+plot(g2.ws, vertex.size = 20, vertex.label.cex = 0.75, layout=layout_in_circle)
+
+```
+ 
+# Properties of the Watts-Strogatz Model
+
+ - High clustering coefficient 
+ 
+ - Small average path length 
+
+# Exponential random graph models (ERGMs) I
+
+ - Exponential random graph models (ERGMs) are a class of models that can be used to generate probability distributions
+ 
+ - Flexible in design; we can decide our parameters 
+ 
+ - Conduct goodness-of-fit tests for model assessment
+ 
+# Exponential random graph models (ERGMs) II
+
+ - The general form for an ERGM is as follows: 
+ 
+ $$P_{\theta, \mathcal{G}}(\textbf{G} = \textbf{g}) = \frac {exp(\theta^{T}\textbf{s(g)})} {\kappa(\theta, \mathcal{G})},\textbf{g} \in \mathcal{G}$$
+ 
+ - $\textbf{Y}$ is the random variable representing a random graph and $\textbf{g}$ is the particular adjacency matrix we observe. $\textbf{s(g)}$ is the vector of model statistics for $\textbf{g}$, $\theta$ is the vector of coefficients for those statistics, and $\kappa(\theta, \mathcal{G})$ is the quantity in the numerator summed over all possible networks
+
+# Properties of ERGMs I
+
+ - Deriving the Erdős-Rényi Model from ERGMs
+ 
+ - Suppose we have a particular graph $g$ and the only statistic we have is $L(G)$, the number of edges in $g$
+ 
+ $$P_{\theta, \mathcal{G}}(g) = \frac {exp(\theta_{L}L(g))} {\sum_{g' \in \mathcal{G}}^{} exp(\theta_{L}L(g'))} = \frac {exp(\theta_{L}L(g))} {\kappa(\theta, \mathcal{G})}, g \in \mathcal{G}$$
+ 
+# Properties of ERGMs II
+
+ - Consider the probability distribution for a particular graph $g$ with $N_E$ edges again (from the Erdős-Rényi model). Using the fact that $N_{E} = L(g)$, taking the equation as a power of base $e$, we get the following: 
+ 
+$$
+\begin{aligned}
+P(g) &= p^{N_E}(1 - p)^{\left({N_V \choose 2} - N_E \right)} \\
+&= p^{L(g)}(1 - p)^{\left(\frac {N_{V}(N_{V} - 1)} {2} - L(g) \right)} \\
+&= \left( \frac {p} {1-p} \right)^{L(g)}(1 - p)^{\frac {N_{V}(N_{V} - 1)} {2}} \\
+&= exp \left(L(g)log \left(\frac {p} {1-p} \right) - \frac {N_{V}(N_{V} - 1)} {2} log \left( \frac {p} {1-p} \right) \right) \\
+&= exp(\theta_{L}L(g) - c) \\
+&= \frac {exp(\theta_{L}L(g))} {exp(c)},
+\end{aligned} 
+$$
 
 # Data Set
 
+ - A component of the Facebook network
+ 
+ - $4039$ vertices and $88234$ edges 
+ 
+ - Simple, connected, and undirected 
+
+# Generating Random Graphs
+
+ - Create graphs of parable magnitude using certain parameters 
+ 
+ - Simulate $1000$ random graphs for and record network statatistics for each graph
+ 
+ - Create distribution of these values and/or see a table of averages
+ 
+ - Compare network statistics of the Facebook network with that of the graphs we generated
+
+# The Picture in Mind
+
+```{r, echo=FALSE}
+set.seed(490)
+
+numsim <- 100 
+
+g.er.karmod.coef <- rep(NA, numsim)
+g.er.karmod.apl <- rep(NA, numsim)
+g.er.karmod.dia <- rep(NA, numsim)
+
+for (i in 1:numsim) {
+  # n = number of vertices, p = probability of a link
+  #p is caluclated as number of edges over number of possible edges
+  #p is then (34 choose 2) since there is the possibility of a link between
+  g.er.karmod <- erdos.renyi.game(n = vcount(karate), p = (ecount(karate)/choose(vcount(karate), 2)))
+  g.er.karmod.coef[i] <- transitivity(g.er.karmod)
+  g.er.karmod.apl[i] <- average.path.length(g.er.karmod)
+  g.er.karmod.dia[i] <- diameter(g.er.karmod)
+}
+```
+
+```{r, echo=FALSE, fig.align='center', fig.height=2, fig.width=5, warning=FALSE}
+gplot1 <- ggplot(data = as.data.frame(g.er.karmod.coef), 
+       aes(x = g.er.karmod.coef)) +
+  geom_histogram(binwidth=0.0065, 
+       colour="blue", 
+       fill="lavender") + 
+  geom_vline(xintercept = transitivity(karate), colour="red") + 
+  labs(title="Simulated 
+       Clustering Coefficients") + 
+  xlab("Clustering Coefficient") + 
+  ylab("Frequency") + 
+  theme(legend.position="none", 
+        plot.title = element_text(size=6),
+        axis.text = element_text(size=4),
+        axis.title = element_text(size=4)) 
+
+
+gplot2 <- ggplot(data = as.data.frame(g.er.karmod.apl), aes(x = g.er.karmod.apl)) +
+  geom_histogram(binwidth=0.031,
+                 colour="blue",
+                 fill = "lavender") + 
+  geom_vline(xintercept = average.path.length(karate), colour="red") + 
+  labs(title="Simulated 
+       Average Path Lengths") + 
+  xlab("Average Path Length") +
+  ylab("") + 
+  theme(legend.position="none", 
+        plot.title = element_text(size=6),
+        axis.text = element_text(size=4),
+        axis.title = element_text(size=4)) 
+
+gplot3 <- ggplot(data = as.data.frame(g.er.karmod.dia), aes(x = g.er.karmod.dia)) +
+  geom_histogram(binwidth=0.12,
+                 colour="blue",
+                 fill = "lavender") + 
+  geom_vline(xintercept = diameter(karate), colour="red") + 
+  labs(title="Simulated Diameters") + 
+  xlab("Diameter") + 
+  ylab("") + 
+  theme(legend.position="none", 
+        plot.title = element_text(size=6),
+        axis.text = element_text(size=4),
+        axis.title = element_text(size=4))
+
+grid.arrange(gplot1, gplot2, gplot3, ncol=3)
+```
+
 # Erdős–Rényi Model
+
+ - $N_{V}$ and $p$
+ - The number of vertices is $4039$
+ - Estimate the probability by taking the number of observed edges and dividing by the number of possible edges $\hat{p} = \frac {88234} {{4039 \choose 2}} = 0.011$ 
+ - For every possible edge among the $4039$ vertices, determine if an edge will form based on the estimated probability
 
 # Watts-Strogatz Model 
 
+ - $N_{V}$, $r$, $p$
+ - Will not use $p$
+ - Start with a lattice with $4039$ vertices
+ - Randomly add $88234 - 4039 = 84195$ edges until we have approximately the same number as our observed network. 
+ - Assign a number of edges to the vertices equal to the smallest degree observed in our Facebook network; $1$
+ - Simplify our simulated graph to eliminate multi-edges and loop
+
+# Results for Erdős–Rényi and Watts-Strogatz Models
+
+  ----------------------------------------------------------------------------------------------
+  Network Statistic     Observed     Erdős-Rényi                   Watts-Strogatz
+  --------------------- ------------ ----------------------------- -----------------------------
+  Transitivity           0.617        0.0108 $\pm$ 0.0001           0.0107 $\pm$ 9.135e-05
+    
+  Average Path Length    4.338        2.606 $\pm$ 0.002             2.6093 $\pm$ 0.0002           
+    
+  Diameter               17           3.96 $\pm$ 0.21               3.95 $\pm$ 0.22
+    
+  Avg. Degree Cen.       43.691       43.69 $\pm$ 0.14              43.45 $\pm$ 0.01 
+    
+  Avg. Betweenness Cen.  2072.642     3242 $\pm$ 4                  3249.2 $\pm$ 0.4 
+    
+  Avg. Closeness Cen.    8.881e-08    9.507e-05 $\pm$ 7.230e-08     9.494e-05 $\pm$ 7.319e-09 
+    
+  Avg. Eigenvector Cen.  0.040        0.620 $\pm$ 0.022             0.6235 $\pm$ 0.0227       
+  ---------------------- ------------ ----------------------------- -----------------------------
+
 # ERGMs
 
-# Conclusion
+ - Four different ERGMs--labeled as ERGM 1a, ERGM 2a, ERGM 2b, and ERGM 3a
+ 
+ - ERGM 1a: one parameter: edges 
+ 
+ - ERGM 2a: two parameters: edges and triangles
+ 
+ - ERGM 2b: two parameters: edges and k-stars (of size 3)
+ 
+ - ERGM 3a: three parameters: edges, triangles, and k-stars (of size 3)
+ 
+ - For each random graph, calculate the networks statistics of interest 
 
-# Results 
+# Results for ERGMs I
+
+  -------------------------------------------------------------------------------------------
+  Network Statistic      Observed    ERGM1a                     ERGM2a
+  ---------------------  ----------- -------------------------- -----------------------------
+  Transitivity           0.617       0.3696 $\pm$ 0.0012        0.4823 $\pm$ 0.0020
+    
+  Average Path Length    4.338       2.885 $\pm$ 0.004          3.052 $\pm$ 0.0086         
+    
+  Diameter               17          5.216 $\pm$ 0.412          6.098 $\pm$ 0.035
+    
+  Avg. Degree            43.691      43.66 $\pm$ 0.052          44.54 $\pm$ 0.03 
+    
+  Avg. Betweenness Cen.  2072.642    3805 $\pm$ 9               4140 $\pm$ 18 
+    
+  Avg. Closeness Cen.    8.881e-08   8.286e-05 $\pm$ 8.353e-06  6.008e-05 $\pm$ 1.514e-05 
+    
+  Avg. Eigenvector Cen.  0.040       0.0417 $\pm$ 0.0008        0.0410 $\pm$ 3.577e-05      
+  ---------------------- ----------- -------------------------- -----------------------------
+
+# Results for ERGMs II
+
+  -------------------------------------------------------------------------------------------
+  Network Statistic      Observed    ERGM2b                     ERGM3a
+  ---------------------- ----------- -------------------------- -----------------------------
+  Transitivity           0.617       0.3787 $\pm$ 0.0013        0.4891 $\pm$ 0.0020
+    
+  Average Path Length    4.338       2.851 $\pm$ 0.003          3.0562 $\pm$ 0.0079  
+    
+  Diameter               17          5.095 $\pm$ 0.293          6.161 $\pm$ 0.3677
+    
+  Avg. Degree Cen.       43.691      44.06 $\pm$ 0.057          44.52 $\pm$ 0.034
+    
+  Avg. Betweenness Cen.  2072.642    3736 $\pm$ 6               4148 $\pm$ 16
+    
+  Avg. Closeness Cen.    8.881e-08   8.558e-05 $\pm$ 6.025e-06  5.875e-05 $\pm$ 1.5035e-05
+    
+  Avg. Eigenvector Cen.  0.040       0.0392 $\pm$ 0.0002        0.0410 $\pm$ 3.451e-05      
+  ---------------------- ----------- -------------------------- -----------------------------
+
+# Conclusions and Future Work 
+
+ - The models were bad, so now what? 
+ 
+ - Choose other models
+ 
+ - Choose different network statistics 
+ 
+ - Choose other data sets
 
 # Implications
 
-# Sources
+ - Understand the flow of information 
 
+ - Better access to jobs through networking 
+ 
+ - Better leads to resources in research 
+ 
+ - Improving traffic 
+ 
+ - Understanding biological systems
+
+# Sources I
+
+Baumer, B., Kaplan, D., & Horton, N. (2017). Modern Data Science With R: With Digital Download. Taylor & Francis. Retrieved from https://books.google.com/books?id=Gv1nvgAACAAJ
+
+Butts, C. T., & others. (2008). Social network analysis with sna. Journal of Statistical Software, 24 (6), 1–51.
+
+Butts, C., Hunter, D., Handcock, M. S., Morris, M., Krivtisky, P. N., Almquist, Z.,. . . Bender de-Moll, S. (2015, June). Introduction to Exponential-family Random Graph (ERG or p*) modeling with ergm. Retrieved from https://statnet.org/trac/raw-attachment/wiki/Sunbelt2015/ergm_tutorial.pdf
+
+Hunter, D. R., Handcock, M. S., Butts, C. T., Goodreau, S. M., Morris, & Martina. (2008). Ergm: A package to fit, simulate and diagnose exponential-family models for networks. Journal of Statistical Software, 24 (3), 1–29.
+
+# Sources II
+
+Leskovec, J., Chakrabarti, D., Kleinberg, J., & Faloutsos, C. (2005). Realistic, Mathematically Tractable Graph Generation and Evolution, Using Kronecker Multiplication. In Knowledge Discovery in Databases: PKDD 2005 (pp. 133–145). Springer, Berlin, Heidelberg. Retrieved from http://link.springer.com/chapter/10.1007/11564126_17
+
+Jackson, M. O. (2013). Social and economic networks: Models and analysis. StanfordUniversity; Coursera Course Lecture.
+
+Kolaczyk, E. D. (2009). Statistical Analysis of Network Data: Methods and Models. Springer Science & Business Media.
+
+Kolaczyk, E. D., & Csárdi, G. (2014).Statistical Analysis of Network Data with R.Springer.
+
+Lazega, E., & Pattison, P. E. (1999). Multiplexity, generalized exchange and cooperation in organizations: A case study. Social Networks, 21 (1), 67–90.
+
+# Sources III
+
+Leskovec, J., & Krevl, A. (2014, June). SNAP Datasets: Stanford large network
+dataset collection. http://snap.stanford.edu/data.
+
+Leskovec, J., Chakrabarti, D., Kleinberg, J., & Faloutsos, C. (2005). Realistic, Mathematically Tractable Graph Generation and Evolution, Using Kronecker Multiplication. In Knowledge Discovery in Databases: PKDD 2005 (pp. 133–145). Springer, Berlin, Heidelberg. Retrieved from http://link.springer.com/chapter/10.1007/11564126_17
+
+Leskovec, J., Chakrabarti, D., Kleinberg, J., Faloutsos, C., & Ghahramani, Z. (2010).
+
+Kronecker Graphs: An Approach to Modeling Networks. Journal of Machine Learning Research, 11 (Feb), 985–1042. Retrieved from http://www.jmlr.org/55papers/v11/leskovec10a.html
+
+# Sources IV
+
+Newman, M. (2010). Networks: An Introduction. OUP Oxford
+
+Travers, J., & Milgram, S. (1967). The small world problem. Phychology Today, 1,
+61–67.
+
+Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of “small-world” networks. Nature, 393 (6684), 440–442. http://doi.org/10.1038/30918
+
+Zachary, W. W. (1977). An information flow model for conflict and fission in small groups. Journal of Anthropological Research, 33 (4), 452–473. http://doi.org/10.1086/jar.33.4.3629752
+ 

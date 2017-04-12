@@ -4,8 +4,10 @@ output: pdf_document
 
 # Revisions
 
-Two typographical error were corrected throughout the thesis. These changes include turning some letters into in-line mathematical symbols (e.g. "a graph G" versus "a graph $G$"). 
+Six typographical errors were corrected throughout the thesis. Major changes among include turning some letters into in-line mathematical symbols (e.g. "a graph G" versus "a graph $G$"). Other changes include: incorrect word choice (e.g. "edges" instead of "vertices") and grammatical errors. 
 
 There were also three footnote errors that did not display the intended information in the Introduction, Chapter 1, and Chapter 2. 
 
+Two edits to the headers of various R-code chunks were made so that the code chunk does not actually run when the file itself is being knit. 
 
+There was a problem were some sources referenced in the text did not appear in the bibliography; they were added back in. 
