@@ -26,6 +26,20 @@ data(karate)
 data(lazega)
 ```
 
+------------------------------------------------------------------
+Network Statistic       Zachary's Karate Club  Lazega's Law Firm 
+---------------------- ---------------------- ------------------
+Transitivity (Global)  0.256                   0.389
+
+Transitivity (Local)   0.588                   0.487
+  
+Avg. Path Length       2.408                   2.144
+
+Diameter               13                      5
+
+---------------------- ---------------------- ------------------
+Table: Some average network statistics for the karate and lawyer networks \label{tab:avgnetstats}
+
 ## Transitivity 
 
 *Transitivity*, otherwise known as the *clustering coefficient*, is the probability that adjacent vertices of a particular vertex are connected. In other words, this value provides a sense of how well-connected the graph is. A higher transitivity implies a graph having many vertices in proximity with each other with edges connecting all of them. Different kinds of transitivity exist and the choice of which one to observe depends largely on whether one wishes to talk about the network globally or locally (Kolaczyk 2009). Both are explained below, but for the sake of choosing one for our analyses, we will focus on the *local average transitivity*. 
@@ -59,7 +73,7 @@ The diameters of the karate and lawyer networks are `r diameter(karate)` and `r 
 
 *Centrality* assigns a measure of "importance" to each vertex in the network. It is similar to the measures of central tendency seen in elementary statistics. People have proposed different types of centrality, some of which are discussed below. We assume our graph $G$ is undirected (Kolaczyk 2009).
 
-*Vertex degree* (or *degree centrality*) is perhaps the most common type of centrality. It is not surprising that vertices with higher vertex degrees are considered to be more central to the network than those with lower vertex degrees. In fact, one common characteristic among real-world networks is that their degree distributions tend to have an unusually high number of such vertices. These graphs follow a *power law distribution*. This property indicates that quite a few vertices with particularly high degrees occur fairly frequently (compared to if the degree distribution was a Poisson, for example). The mean of the vertex degrees of all the vertices of the graph yields the *mean* (or *average*) *degree*, often denoted with lowercase $c$.
+*Vertex degree* (or *degree centrality*) is perhaps the most common type of centrality. It is not surprising that vertices with higher vertex degrees are considered to be more central to the network than those with lower vertex degrees. In fact, one common characteristic among real-world networks is that their degree distributions tend to have an unusually high number of such vertices. The mean of the vertex degrees of all the vertices of the graph yields the *mean* (or *average*) *degree*, often denoted with lowercase $c$.
 
 *Closeness centrality* measures how close a vertex is to other vertices based on the inverse of the total distance of the vertex from all others. Closeness centrality is computed as: 
 
@@ -102,20 +116,22 @@ mean(igraph::eigen_centrality(lazega)$vector)
 ```
 
 
--------------------------------------------------------------------------------------
-Network Statistic                  Zachary's Karate Club      Lazega's Law Firm
-------------------------------- -------------------------- --------------------------
-Avg. Degree                     4.588                      6.389  
+--------------------------------------------------------------
+Network Statistic    Zachary's Karate Club  Lazega's Law Firm   
+-------------------- ---------------------- ------------------
+Degree               4.588                  6.389    
  
-Avg. Closeness Centrality       0.005                      0.007    
+Closeness Cen.       0.005                  0.007   
   
-Avg. Betweenness Centrality     26.194                     17.833           
+Betweenness Cen.     26.194                 17.833
   
-Avg. Eigenvector Centrality     0.377                      0.458       
-  
-------------------------------- -------------------------- --------------------------
+Eigenvector Cen.     0.377                  0.458
+
+-------------------- ---------------------- -------------------
 Table: Average centrality measures for the karate and lawyer networks \label{tab:avgcent}
 
-`r ref("avgcent", type = "table")` above shows the average centrality measures for both the karate and lawyer networks. Because each type of centrality is measuring importance of vertices differently, it comes as no surprise that all of the average centrality values within one network will be different from each other. These average values, however, do not give any indication of which, or how many, vertices in the network are important. Additionally, the use of an average means that the value can be subjected to some very drastic outliers that could potentially skew its value. However, from `r ref("avgcent", type = "table")`, we see that lawyers in the law firm tend to have higher degrees, closeness centrality, and eigenvector centrality on average than the karate club. This means that, on average the lawyers in this firm have a lot of ties in the firm, are very well connected, and have a relatively high rank amongst their peers when compared to those in the karate club. The high betweenness centrality in the karate club indicates that there are a few members (in particular, the dojo's master and the disciple) who tend to have connections with members that do not have connections with each other. These centrality measures make sense since those in the company are probably more likely to know one another than those in the karate club who may only be on close terms with the master. 
+`r ref("avgcent", type = "table")` above shows the average centrality measures for both the karate and lawyer networks. Because each type of centrality is measuring the importance of vertices differently, it comes as no surprise that all of the average centrality values within one network will be different from each other. These average values, however, do not give any indication of which, or how many, vertices in the network are important. We also note that the centrality measures here are not scaled. However, because the scaling factors are dependent on the number of vertices in the network, it is possible for us to compare between these two networks, as both have approximately the same number of vertices. 
+
+Additionally, the use of an average means that the value can be subjected to some very drastic outliers that could potentially skew its value. However, from `r ref("avgcent", type = "table")`, we see that lawyers in the law firm tend to have higher degrees, closeness centrality, and eigenvector centrality on average than the karate club. This means that, on average the lawyers in this firm have a lot of ties in the firm, are very well connected, and have a relatively high rank amongst their peers when compared to those in the karate club. The high betweenness centrality in the karate club indicates that there are a few members (in particular, the dojo's master and the disciple) who tend to have connections with members that do not have connections with each other. These centrality measures make sense since those in the company are probably more likely to know one another than those in the karate club who may only be on close terms with the master. 
 
 We will use these seven network statistics listed above in our simulation study. By calculating these values from our observed network, it is possible for us to compare our network with graphs simulated from our graph models. 

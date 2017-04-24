@@ -4,25 +4,27 @@ output: pdf_document
 
 # Conclusion
 
-In this thesis, we have provided a brief overview of networks, including network statistics and some graph models. We also applied certain graph models--such as the Erdős-Rényi and Watts-Strogatz models along with various ERGMs with different combinations of parameters--and fitted them to our component of the Facebook network. By letting the graph models take in certain parameters of our Facebook network, we generated graphs of parable magnitude. We compared the network statistics between these generated graphs and our target network to measure each model's accuracy. This simulation study suggested that that none of the models that we examined did a good job of modeling the Facebook network for our chosen network statistics. 
+In this thesis, we have provided a brief overview of networks, including network statistics and some graph models. We also applied certain graph models--such as the Erdős-Rényi and Watts-Strogatz models along with various ERGMs with different combinations of parameters--and fitted them to our component of the Facebook network. By letting the graph models take in certain parameters of our Facebook network, we generated graphs of parable magnitude. We compared the network statistics between these generated graphs and our target network to measure each model's accuracy. This simulation study suggested that none of the models that we examined did a good job of modeling the Facebook network for our chosen network statistics. 
 
 However, this simulation study only scratches the surface of what network science has to offer. Firstly, we can simply change our approach with Erdős-Rényi, Watts-Strogatz, and exponential random graph models we have so far. In applying the Erdős-Rényi model, we had used the $G(N_{V}, p)$ model. For the same of comparison, we could also explore how well the $G(N_{V}, N_{E})$ model fits the Facebook network. Our use of the Watts-Strogatz model began with a circular lattice with only one neighbor. Instead of specifying a probability $p$ of a shortcut forming, we simply added "enough" edges so that they are similar to the observed Facebook network. While the methodology is logical, the results of the simulation study become very similar to that of the Erdős-Rényi model and we ultimately lose the characteristic of high transitivity that the Watts-Strogatz model is known for. Future applications of the Watts-Strogatz model should include a logical methodology to make better use of the circular model and shortcut probability $p$. ERGMs seemed to have the most promise--as we increase the number of parameters, we see that the estimates of many network statistics tend to approach the observed value. This suggests that trying other ERGMs with more parameters and different combinations of them could potentially improve the results of this study. See @butts_introduction_2015 for a list of possible ERGM parameters to choose from. 
 
-Additonally, we can bring in other social networks into this study. Could underlying undirected graphs of directed networks be a better fit for the models here? We could potentially analyze a different dataset, such as Twitter, in which we look at the underlying graph of directed followers instead of mutal friendships. Could network size be a factor as well? The Facebook component we are currently observing could perhaps be too small and cause issues of variance. It is also possible for us to test other network statistics. Without providng the definitions, we can consider values such as *reciprocity*, *assortativity*, or even other kinds of centrality measures. See @newman_networks:_2010 for more details. 
+Additionally, we can bring in other social networks into this study. Could underlying undirected graphs of directed networks be a better fit for the models here? We could potentially analyze a different dataset, such as Twitter, in which we look at the underlying graph of directed followers instead of mutual friendships. Could network size be a factor as well? The Facebook component we are currently observing could perhaps be too small and cause issues of variance. It is also possible for us to test other network statistics. Without providing the definitions, we can consider values such as *reciprocity*, *assortativity*, or even other kinds of centrality measures. See @newman_networks:_2010 for more details. 
 
 It is also possible for us to choose other models to test our current Facebook network on. In fact, many other graphs models exist beyond what was presented here. Because social networks exhibit certain characteristics different from other kinds of networks, it comes as no surprise that there have been other models that are specifically tailored to its study. See @toivonen_comparative_2009 for a study of *network evolution models* and *nodal attribute models*, two specific types of social network models. Also, see @leskovec_realistic_2005 and @leskovec_kronecker_2010 about more recent developments in network science. They introduce models called *Kronecker graphs* that have the benefit of only requiring a few parameters to fit to a target network in linear time. 
 
 A successful simulation study has many implications and can benefit not only statistics and network science, but in just about all other disciplines as well. 
+
+
+
 
 <!--
 If you feel it necessary to include an appendix, it goes here.
 -->
 
 \singlespacing
-
 \appendix
 
-# R/R-Markdown Code
+#R/R-Markdown Code
 
 This first appendix includes all of the R chunks of code used throughout the document (using the `include = FALSE` chunk tag) to help with readability and/or setup. Some code chunks were shown in the main body of the chapters for clarity and illustration. 
 
@@ -101,17 +103,17 @@ The code below plots the entire component of the Facebook that SNAP has provided
 ```{r,  ref.label='fbelplot', results = 'hide', echo = TRUE, eval = FALSE}
 ```
 
-The following code describes the data simulation process using the Erdős-Rényi model. We create seven empty vectors and fill the $i^{th}$ term of each vector by running through a for loop that calculates seven network statisitcs for the $i^{th}$ random graph generated from the model. See results in \label{tab:erwsdescstats}.
+The following code describes the data simulation process using the Erdős-Rényi model. We create seven empty vectors and fill the $i^{th}$ term of each vector by running through a for loop that calculates seven network statisitcs for the $i^{th}$ random graph generated from the model. See results in `r ref("erwsdescstats", type = "table")`.
 
 ```{r, ref.label='erdosrenyisim', results = 'hide', echo = TRUE, eval = FALSE}
 ```
 
-The following code describes the data simulation process using the Watts-Strogatz model. This process is analogous to the process described above. See results in \label{tab:erwsdescstats}.
+The following code describes the data simulation process using the Watts-Strogatz model. This process is analogous to the process described above. See results in `r ref("erwsdescstats", type = "table")`.
 
 ```{r, ref.label='wattsstrogatzsim', results = 'hide', echo = TRUE, eval = FALSE}
 ```
 
-The following code descibes how to fit graphs using ERGMs and simulating from the models that have been constructed. We have four models with different combinations of parameters, which we denote 1a (edges), 2a (edges and triangles), 2b (edges and k-stars of size $3$), and 3a (edges, triangles, and k-stars of size $3$). See results in \label{tab:ergm1a2a} and \label{tab:ergm2b3a}.
+The following code descibes how to fit graphs using ERGMs and simulating from the models that have been constructed. We have four models with different combinations of parameters, which we denote 1a (edges), 2a (edges and triangles), 2b (edges and k-stars of size $3$), and 3a (edges, triangles, and k-stars of size $3$). See results in `r ref("ergm1a2a", type = "table")` and `r ref("ergm2b3a", type = "table")`.
 
 ```{r, ref.label='ergmmods', results = 'hide', echo = TRUE, eval = FALSE}
 ```

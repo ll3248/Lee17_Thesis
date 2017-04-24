@@ -74,7 +74,7 @@ As indicated earlier, the $G(N_V, p)$ model is the collection of simple graphs w
 $$P(G = g) = p^{N_E}(1 - p)^{\left({N_V \choose 2} - N_E \right)}$$
 of being picked. For precisely $N_E$ edges, there are ${{N_{V} \choose 2} \choose N_{E}}$ ways to arrange the $N_{E}$ edges among the ${N_V \choose 2}$ possible edges. Thus, the total probability of a random graph $G$ with $N_{E}$ edges and $N_{V}$ vertices is 
 $$P(G) = {{N_{V} \choose 2} \choose N_{E}}p^{N_E}(1 - p)^{{N_V \choose 2} - N_E}$$
-This, however, is simply a binomial distribution, where we have some probability of success ($p$), two possible outcomes (edge formation or no edge formation), a finite number of trials (${N_{V} \choose 2}$ distinct edges), and ${{N_{V} \choose 2} \choose N_{E}}$ different ways in which the outcomes can be arranged. Using this, the mean value of $N_E$ for the model is then a weighted average. It is the sum of the products of every possible number of edges $N_E$ and the total probability that a graph with $N_{V}$ vertices and $N_{E}$ edges appears, $P(N_{E})$. However, because we know the probability of an edge forming, the mean number of edges would equal to the product of the total number of possible vertices ${N_{V} \choose 2}$ and the probability $p$. This makes sense as we can expect that $100p$ percent of the possible edges in the graph to actually have edges. Thus, the mean number of edges $\langle N_{E} \rangle$ for a random graph $G$ is
+This, however, is simply a binomial distribution, where we have some probability of success ($p$), two possible outcomes (edge formation or no edge formation), a finite number of trials (${N_{V} \choose 2}$ possible edges), and ${{N_{V} \choose 2} \choose N_{E}}$ different ways in which the outcomes can be arranged. Using this, the mean value of $N_E$ for the model is then a weighted average. It is the sum of the products of every possible number of edges $N_E$ and the total probability that a graph with $N_{V}$ vertices and $N_{E}$ edges appears, $P(N_{E})$. However, because we know the probability of an edge forming, the mean number of edges would equal to the product of the total number of possible vertices ${N_{V} \choose 2}$ and the probability $p$. This makes sense as we can expect that $100p$ percent of the possible edges in the graph to actually have edges. Thus, the mean number of edges $\langle N_{E} \rangle$ for a random graph $G$ is
 $$ \langle N_{E} \rangle = \sum_{N_{E}=0}^{{N_{V} \choose 2}} N_{E}P(N_{E}) = {N_{V} \choose 2}p$$
 
 For a graph with exactly $N_{E}$ edges, it is easy to see that the mean degree is $\frac {2N_{E}} {N_{V}}$. The factor of $2$ allows an edge to be counted as part of the degree for each of the pair vertices that it connects. By taking a similar weighted average, where we sum the products of the average degree of a graph with $N_E$ edges with the total probability of a graph with $N_E$ edges being chosen, we can get the average degree, denoted $c$ or $\langle N_{V} \rangle$, for this model. Using the formula for the mean number of edges above, we can simplify this weighted average as
@@ -96,7 +96,7 @@ Consider the equation for the mean number of edges: $c = (N_{V} - 1)p$. Rewritin
 $$
 \begin{aligned}
 (1 - p)^{N_{V} - 1 - k} &= e^{ln((1 - p)^{N_{V} - 1 - k})} \\
-&= e^{N_{V} - 1 - k}ln(1 - \frac {c} {N_{V} - 1}) \\
+&= e^{(N_{V} - 1 - k) ln(1 - \frac {c} {N_{V} - 1})} \\
 &\simeq e^{-(N_{V} - 1 - k)(\frac {c} {N_{V} - 1})} \\
 &\simeq e^{-c},
 \end{aligned}
@@ -115,13 +115,13 @@ p_{k} &= {N_{V} -1 \choose k}p^{k}(1 - p)^{N_{V} - 1 - k} \\
 &= e^{-c} \frac{c^{k}} {k!}
 \end{aligned}
 $$
-as $N_{V} \to \infty$. This equation is simply the Poisson distribution (Newman 2010). 
+as $N_{V} \to \infty$. This equation is simply the Poisson distribution with the mean parameter $c$ (Newman 2010). 
 
 To use this model in our simulation study, we simply take the number of nodes, $N_{V}$, and the probability of a link forming, which equals the number of observed edges divided by the number of possible edges, that is, $\frac{N_{E}} {{N_{V} \choose 2}}$. While we have discussed issues of using the Erdős-Rényi model earlier--such as clustering--the random placement of nodes serves as a good starting point. The idea is to see if we can find a model that does at least better than the random assignment of edges to the vertices. 
 
 ## Watts-Strogatz Model
 
-@watts_collective_1998 noticed that many networks in real life have high levels of clustering and only require short average path lengths between nodes with high degree. In the Erdős-Rényi model, simulated graphs of parable magnitude tend to have smaller-than-expected clustering coefficients. As we had seen in Milgram's experiment, networks among people are not quite has disconnected as we had once thought. If any two people in the world are, on average, ever seperated by six people, there is some notion of a "small-world." In the Watts-Strogatz model, we start with several parameters: $N_V$ vertices, which are arranged in a circular fashion, which we will call the "circular model", the number of beginning neighbors for each node, $r$, and the rewiring probability, $p$, of an edge being moved to another pair of vertices.  A variant of this model, which we will use instead, sets the rewiring probability to be zero and utilizes a shortcut probability that added edges randomly to the starting circular model that connect vertices that did not have an edge before (Newman 2010).
+@watts_collective_1998 noticed that many networks in real life have high levels of clustering and only require short average path lengths between nodes with high degree. In the Erdős-Rényi model, simulated graphs of parable magnitude tend to have smaller-than-expected clustering coefficients. As we had seen in Milgram's experiment, networks among people are not quite has disconnected as we had once thought. If any two people in the world are, on average, ever separated by six people, there is some notion of a "small-world." In the Watts-Strogatz model, we start with several parameters: $N_V$ vertices, which are arranged in a circular fashion, which we will call the "circular model", the number of beginning neighbors for each node, $r$, and the rewiring probability, $p$, of an edge being moved to another pair of vertices.  A variant of this model, which we will use instead, sets the rewiring probability to be zero and utilizes a shortcut probability that added edges randomly to the starting circular model that connect vertices that did not have an edge before (Newman 2010).
 
 ```{r wattsstrogatzexample, include = FALSE, eval = FALSE}
 set.seed(499)
@@ -148,13 +148,13 @@ plot(g2.ws, vertex.size = 20, vertex.label.cex = 0.75,
      layout=layout_in_circle)
 ```
 
-In a circular model with $10$ nodes, each having two neighbors, the clustering coefficient is relatively high at exactly $0.5$. Diameter and average path length are nontrivial, and can be rather high as well, at $3$ and $1.667$, respectively. 
+Let us consider an example network. In a circular model with $10$ nodes, each having two neighbors, the clustering coefficient is relatively high at exactly $0.5$. Diameter and average path length are nontrivial, and can be rather high as well, at $3$ and $1.667$, respectively. 
 
 ![Examples of graphs generated from the Watts-Strogatz model. Both: $N_V = 10$, $r = 2$. Left: $N_E = 20$. Right: $N_E = 24$.](figure/22wattsstrogatzexample.png)
 
-By adding edges (instead of simply rewiring), the diameter and average path length tend to decrease. This makes sense because this rewiring creates random shortcuts in the network framework. In the right-hand graph of Figure 3.2, which is the left-hand graph after adding $4$ random edges, we see that the diameter and average path length have decreased to $2$, and $1.467$, respectively.
+By adding edges, the diameter and average path length tend to decrease. This makes sense because this creates random shortcuts in the network framework. In the right-hand graph of Figure 2.2, which is the left-hand graph after adding $4$ random edges--$\{1, 5\}, \{2, 9\}, \{3, 10\}, \{4, 9\}$--, we see that the diameter and average path length have decreased to $2$, and $1.467$, respectively.
 
-Like the Erdős-Rényi model, the Watts-Strogatz model also has very nice properties. Not only is it able to achieve a high clustering coefficient due to the inherent circular structure--which was definitely a drawback seen in the previous model--but adding in shortcuts also allow for average path lengths to be small as well. Other properties, such as degree distributions and counts of triangle and triples, and clustering coefficients, are shown below.  
+Like the Erdős-Rényi model, the Watts-Strogatz model also has very nice properties. Not only is it able to achieve a high clustering coefficient due to the inherent circular structure--which was definitely a drawback seen in the previous model--but adding in shortcuts also allow for average path lengths to be small as well. As we will see, this model has other properties, such as clustering coefficient, degree distribution, and triangle and triple counts.
 
 Given a circular model with $N_{V}$ vertices and number of starting neighbors $r$, a triangle on the model is represented by traveling across two edges in the same direction from a starting vertex, followed by one edge back to that vertex. With $r$ neighbors, there are ${\frac {r} {2} \choose 2} = \frac {1} {4} N_{V} r \left(\frac {1} {2} r - 1 \right)$ ways to choose the two starting edges, and then $N_V$ ways to take the last step back, making for a total of $\frac {1} {2} N_{V} r(r - 1)$ triangles. The number of triples for each vertex is ${r \choose 2} = \frac {1} {2}r(r - 1)$ since any two unique edges from a vertex will connect three vertices. This, the total number of triples is ${r \choose 2} = \frac {1} {2}N_{V}r(r - 1)$.
 
@@ -168,11 +168,11 @@ C &= \frac {(\text{number of pairs of neighbors of } i \text{ that are connected
 $$
 There is a minimum clustering coefficient of $0$ if $r = 2$ and a maximum of $\frac {3} {4}$ as $r \to \infty$. Note that this value is also independent of $N_{V}$ (Newman 2010). 
 
-The starting circular model has $\frac {1} {2} N_{V}r$ non-shortcut edges. It is possible to add in shortcut edges to pairs of vertices that have yet to be connected with some probability $p$. Thus, on average, we add approximately $\frac {1} {2} N_{V}rp$ shortcuts--which mean there are $N_{V}rp$ ends created by the shortcuts. The probability $p_{s}$ that a number of shortcuts, $s$, is attached to any one vertex has mean $rp$ follows a Poisson distribution
+The starting circular model has $\frac {1} {2} N_{V}r$ non-shortcut edges. It is possible to add in shortcut edges to pairs of vertices that have yet to be connected with some probability $p$. Thus, on average, we add approximately $\frac {1} {2} N_{V}rp$ shortcuts--which mean there are $N_{V}rp$ ends created by the shortcuts. The probability $p_{s}$ that a number of shortcuts, $s$, is attached to any one vertex has mean $rp$ and follows a Poisson distribution
 $$p_{s} = e^{-rp} \frac {(rp)^{s}} {s!}.$$
 Using the fact that the total degree of a vertex $k$ is the sum of the starting neighbors $r$ and the number of starting shortcuts $s$, that is $k = r + s$, we can combine this with the equation above to get the degree distribution for the Watts-Strogaz model:
 
-$$p_{k} = e^{-rp}\frac {(rp)^{k - r}} {k - r},$$
+$$p_{k} = e^{-rp} \frac {(rp)^{k - r}} {(k - r)!},$$
 for $k \geq r$ and $p_{k} = 0$ if $k < r$ (Newman 2010).
 
 While it can be difficult to precisely calculate the clustering coefficient, we can calculate a limit for the number of triangles and triples. The number of triangles in the circular model remain unchanged, and the number of triangles created by the shortcuts is negligible compared to the number that the circle originally contained for large graphs. This is because the number of paths of length two that are completed by shortcuts to form triangles remains constant for large $N_{V}$. The argument is similar for new triangles formed from two or three shortcuts as well. Thus, the leading term for the number of triangles in the Watts-Strogatz model is $\frac {1} {4} N_{V}r \left(\frac {1} {2} r - 1 \right)$, which is equal to that of the circular model. For the number of triples, we consider the $\frac {1} {2} N_{V} r(r - 1)$ triples from the circular structure itself, the $\frac {1} {2}N_{V}rp$ shortcuts on average for each vertex times $r$ neighbors times $2$ ends for each shortcut equals $N_{V}r^{2}p$ number of triples created by a shortcut combining with an edge in the circle, and the $\frac {1} {2} r^{2} p^2$ expected number of connected triples centered at a vertex times $N_{V}$ vertices equals $\frac {1} {2} N_{V} r^{2} p^2$. Thus, 
@@ -185,7 +185,7 @@ C &= \frac {(\text{number of triangles}) \times 3} {\text{number of connected tr
 $$
 When $p = 0$, the clustering coefficient is equal to that of the circular model. And as $p$ increases, the clustering coefficient will decrease. It reaches a minimum value of $C = \frac {3(r - 2)} {(4c - 1)}$ when $p = 1$ (Newman 2010). 
 
-Calculating other parameters, such as average path length, become much more difficult. In fact, no exact expressions for average path length have been discovered; only approximations. One special property of path lengths in this model, however, is that they *scale* with the model parameters. This means that path length is calculated in terms of some function that does not depend on any parameters. For more information on scaling, see @newman_networks:_2010.
+Calculating other parameters, such as average path length, are much more difficult for this model. In fact, no exact expressions for average path length have been discovered; only approximations. One special property of path lengths in this model, however, is that they *scale* with the model parameters. This means that path length is calculated in terms of some function that does not depend on any parameters. For more information on scaling, see @newman_networks:_2010.
 
 While it is entirely possible that a network could potentially have some kind of rewiring process, it is less likely that this is true in the context of social networks. In other words, ties between people do not usually disappear and randomly reappear between others. However, we can still make use of the possibility that a social network can start with a circular model with some initial number of neighbors. New edges to create shortcuts can be added until we get a graph of similar order and size. 
 

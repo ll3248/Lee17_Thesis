@@ -99,13 +99,13 @@ plot(fbel,
 
 ## Generating Random Graphs
 
-For each model, we create graphs of parable magnitude using some of the information calculated from the our Facebook network. We compare selected statistical network statistics of the Facebook network with that of the graphs we generate to see if the observed network and the simulated graphs have similar characteristics. We explain the process of generating one random graph for each model in the sections below. We simulate $1000$ random graphs for each model and record the statistics such as transitivity, diameter, and average centrality values. Because we have $1000$ values (one for each random graph for each model), we could potentially see a distribution of these values or even just take the average of these values. This means that for statistics such as *average* degree, we were interested in recording an average of the average values. The first column of `r ref("erwsdescstats", type="table")` shows the network statistics we were interested in and the average statistics recorded under each model along with the standard deviation. 
+For each model, we create graphs of parable magnitude using some of the information calculated from the our Facebook network. We compare selected statistical network statistics of the Facebook network with that of the graphs we generate to see if the observed network and the simulated graphs have similar characteristics. In the sections below, we explain the algorithm, or steps, to simulate one random graph for each model in the sections below. We simulate $1000$ random graphs for each model and record the statistics such as transitivity, diameter, and average centrality values. Because we have $1000$ values--one for each random graph for each model--we can obtain a distribution of these values or a table of average values. 
 
 ### Using the Erdős-Rényi Model
 
 Recall that the Erdős-Rényi model takes in only two parameters, which are the number of vertices, $N_{V}$, and the fixed probability of edge forming between any two different vertices, $p$. The number of vertices is already given as $4039$, but to find the probability, we estimate this by taking the number of observed edges and dividing it by the number of possible edges. For a graph $G$, this estimated probability, $\hat{p}$, is
 $$\hat{p} = \frac {N_{E}} {{N_{V} \choose 2}},$$
-where $N_{E}$ is the number of edges in  $G$ and $N_{V}$ is the number of vertices in $G$. Our estimated probability $\hat{p}$ for this Facebook network is then $\frac {88234} {{4039 \choose 2}}$, or approximately $0.011$ Thus, in order to simulate one graph from this model, we must look at every possible edge among the $4039$ vertices and determine if an edge will form based on the given probability. 
+where $N_{E}$ is the number of edges in  $G$ and $N_{V}$ is the number of vertices in $G$. Our estimated probability $\hat{p}$ for this Facebook network is then $\frac {88234} {{4039 \choose 2}}$, or approximately $0.011$. Thus, in order to simulate one graph from this model, we must look at every possible edge among the $4039$ vertices and determine if an edge will form based on the given probability. 
 
 ```{r erdosrenyisim, eval = FALSE, echo = FALSE}
 set.seed(499)
@@ -272,7 +272,7 @@ sd(g.ws.fbel.avgeigveccen) #0.02269783
 
 ### Using ERGMs
 
-We consider four different ERGMs--which we label as ERGM 1a, ERGM 2a, ERGM 2b, and ERGM 3a. ERGM 1a takes in only the most basic parameter: edges. In Chapter 2, we have already shown its relationship to the Erdős-Rényi model. ERGM 2a and 2b both take in two parameters: edges and triangles for 2a, and edges and k-stars (of size 3) for 2b. Lastly, ERGM 3a, takes in all three parameters: edges, triangles, and k-stars (of size 3). Similar to linear regression, adding in more parameters will allow the ERGM to fit more closely to the observed network but at the cost of greater complexity. We do not consider models that only consist of just the triangle parameter or just the k-star parameter. This is because information about k-stars and triangles are based off on some knowledge about edges anyway. After fitting ERGMs with the desired parameters (via maximum likelihood or MCMC), we begin simulating random graphs from each model. For each random graph, we calculate the networks statistics of interest to us. 
+We consider four different ERGMs--which we label as ERGM 1a, ERGM 2a, ERGM 2b, and ERGM 3a. ERGM 1a takes in only the most basic parameter: edges. In Chapter 2, we have already shown its relationship to the Erdős-Rényi model. ERGM 2a and 2b both take in two parameters: edges and triangles for 2a, and edges and k-stars (of size 3) for 2b. Lastly, ERGM 3a, takes in all three parameters: edges, triangles, and k-stars (of size 3). Similar to linear regression, adding in more parameters will allow the ERGM to fit more closely to the observed network but at the cost of greater complexity. We do not consider models that only consist of just the triangle parameter or just the k-star parameter. This is because information about k-stars and triangles are based on some knowledge about edges anyway. After fitting ERGMs with the desired parameters (via maximum likelihood or MCMC), we begin simulating random graphs from each model. For each random graph, we calculate the networks statistics of interest to us. 
 
 ```{r ergmmods, eval = FALSE, echo = FALSE}
 # needs an object of class network
@@ -575,68 +575,72 @@ sd(g.ergm3a.fbg.sim.avgeigveccen) #3.450909e-05
 
 \clearpage
 
--------------------------------------------------------------------------------------------------------------
-Network Statistic               Observed     Erdős-Rényi                   Watts-Strogatz
-------------------------------- ------------ ----------------------------- -----------------------------
-Transitivity                    0.617        0.0108 $\pm$ 0.0001           0.0107 $\pm$ 9.135e-05
+----------------------------------------------------------------------------------------------
+Network Statistic    Observed     Erdős-Rényi                   Watts-Strogatz
+------------------ ------------ ----------------------------- -----------------------------
+Transitivity        0.617        0.0108 $\pm$ 0.0001           0.0107 $\pm$ 9e-05
   
-Average Path Length             4.338        2.606 $\pm$ 0.002             2.6093 $\pm$ 0.0002           
+Avg. Path Length    4.338        2.606 $\pm$ 0.002             2.609 $\pm$ 0.0002           
   
-Diameter                        17           3.96 $\pm$ 0.21               3.95 $\pm$ 0.22
+Diameter            17           3.96 $\pm$ 0.21               3.95 $\pm$ 0.22
   
-Avg. Degree                     43.691       43.69 $\pm$ 0.14              43.45 $\pm$ 0.01 
+Degree Cen.         43.69        43.69 $\pm$ 0.14              43.45 $\pm$ 0.01 
   
-Avg. Betweenness Centrality     2072.642     3242 $\pm$ 4                  3249.2 $\pm$ 0.4 
+Betweenness Cen.    2072.642     3242 $\pm$ 4                  3249.2 $\pm$ 0.4 
   
-Avg. Closeness Centrality       8.881e-08    9.507e-05 $\pm$ 7.230e-08     9.494e-05 $\pm$ 7.319e-09 
+Closeness Cen.      8.88e-08     9.507e-05 $\pm$ 7e-08         9.494e-05 $\pm$ 7e-09 
   
-Avg. Eigenvector Centrality     0.040        0.620 $\pm$ 0.022             0.6235 $\pm$ 0.0227       
-------------------------------- ------------ ----------------------------- -----------------------------
-Table: Comparisons of network statistics among graphs simulated from the Erdős-Rényi and Watts-Strogatz models and the observed network \label{tab:erwsdescstats}
+Eigenvector Cen.    0.040        0.620 $\pm$ 0.022             0.6235 $\pm$ 0.0227       
+------------------- ------------ ----------------------------- -----------------------------
+Table: Comparisons of network statistics among graphs simulated from the Erdős-Rényi and Watts-Strogatz models and the observed network (estimate $\pm$ standard deviation) \label{tab:erwsdescstats}
 
-----------------------------------------------------------------------------------------------------
-Network Statistic               Observed    ERGM1a                     ERGM2a
-------------------------------- ----------- -------------------------- -----------------------------
-Transitivity                    0.617       0.3696 $\pm$ 0.0012        0.4823 $\pm$ 0.0020
+----------------------------------------------------------------------------------------
+Network Statistic     Observed    ERGM1a                     ERGM2a
+------------------  ----------- -------------------------- -----------------------------
+Transitivity        0.617       0.3696 $\pm$ 0.0012        0.4823 $\pm$ 0.0020
   
-Average Path Length             4.338       2.885 $\pm$ 0.004          3.052 $\pm$ 0.0086         
+Avg. Path Length    4.338       2.885 $\pm$ 0.004          3.052 $\pm$ 0.009         
   
-Diameter                        17          5.216 $\pm$ 0.412          6.098 $\pm$ 0.035
+Diameter            17          5.216 $\pm$ 0.412          6.098 $\pm$ 0.035
   
-Avg. Degree                     43.691      43.66 $\pm$ 0.052          44.54 $\pm$ 0.03 
+Degree Cen.         43.69       43.66 $\pm$ 0.05           44.54 $\pm$ 0.03 
   
-Avg. Betweenness Centrality     2072.642    3805 $\pm$ 9               4140 $\pm$ 18 
+Betweenness Cen.    2072.642    3805 $\pm$ 9               4140 $\pm$ 18 
   
-Avg. Closeness Centrality       8.881e-08   8.286e-05 $\pm$ 8.353e-06  6.008e-05 $\pm$ 1.514e-05 
+Closeness Cen.      8.88e-08    8.286e-05 $\pm$ 8.35e-06   6.01e-05 $\pm$ 1.51e-05 
   
-Avg. Eigenvector Centrality     0.040       0.0417 $\pm$ 0.0008        0.0410 $\pm$ 3.577e-05      
-------------------------------- ----------- -------------------------- -----------------------------
-Table: Comparisons of network statistics among graphs simulated from ERGMs (1a: edges and 2a: edges and triangles) and the observed network \label{tab:ergm1a2a}
+Eigenvector Cen.    0.040       0.0417 $\pm$ 0.0008        0.041 $\pm$ 5e-05      
 
-----------------------------------------------------------------------------------------------------
-Network Statistic               Observed    ERGM2b                     ERGM3a
-------------------------------- ----------- -------------------------- -----------------------------
-Transitivity                    0.617       0.3787 $\pm$ 0.0013        0.4891 $\pm$ 0.0020
-  
-Average Path Length             4.338       2.851 $\pm$ 0.003          3.0562 $\pm$ 0.0079  
-  
-Diameter                        17          5.095 $\pm$ 0.293          6.161 $\pm$ 0.3677
-  
-Avg. Degree                     43.691      44.06 $\pm$ 0.057          44.52 $\pm$ 0.034
-  
-Avg. Betweenness Centrality     2072.642    3736 $\pm$ 6               4148 $\pm$ 16
-  
-Avg. Closeness Centrality       8.881e-08   8.558e-05 $\pm$ 6.025e-06  5.875e-05 $\pm$ 1.5035e-05
-  
-Avg. Eigenvector Centrality     0.040       0.0392 $\pm$ 0.0002        0.0410 $\pm$ 3.451e-05      
-------------------------------- ----------- -------------------------- -----------------------------
-Table: Comparisons of network statistics among graphs simulated from ERGMs (2b: edges and k-stars(3) and 3a: edges, triangles, and k-stars($3$)) and the observed network \label{tab:ergm2b3a}
+------------------- ----------- -------------------------- ----------------------------
+Table: Comparisons of network statistics among graphs simulated from ERGMs (1a: edges and 2a: edges and triangles) and the observed network (estimate $\pm$ standard deviation) \label{tab:ergm1a2a}
 
-Based on `r ref("erwsdescstats", type = "table")`, we see that the estimated average statistics for the Erdős-Rényi and Watts-Strogatz models are very similar to each other but are drastically different from many of the observed values of our Facebook network. This means that while the graphs generated from each model look very similar to each other, they look drastically different from our observed Facebook network. This comes as no surprise since the methods used to construct graphs under both models are very likely to generate almost the same number of vertices. We even see this in our simulation study; in the fourth row of `r ref("erwsdescstats", type = "table")`, the average degree estimate for both models was within one degree of the other. Additionally, in both constructions, we are adding the edges randomly, so they are almost always spread evenly throughout the $4039$ vertices. This means that additional features of the observed network, such as large clusters or degrees with high centralities, are likely to be missed by graphs generated from these two models. This is why the transitivity, average path length, and diameter for both models are smaller than what was actually observed. 
+--------------------------------------------------------------------------------------
+Network Statistic     Observed    ERGM2b                     ERGM3a
+------------------  ----------- -------------------------- -----------------------------
+Transitivity        0.617       0.379 $\pm$ 0.001          0.489 $\pm$ 0.002
+  
+Avg. Path Length    4.338       2.851 $\pm$ 0.003          3.056 $\pm$ 0.008 
+  
+Diameter            17          5.095 $\pm$ 0.293          6.161 $\pm$ 0.368
+  
+Degree Cen.         43.69       44.06 $\pm$ 0.06           44.52 $\pm$ 0.03
+  
+Betweenness Cen.    2072.642    3736 $\pm$ 6               4148 $\pm$ 16
+  
+Closeness Cen.      8.88e-08    8.558e-05 $\pm$ 6.03e-06   5.88e-05 $\pm$ 1.50e-05
 
-Similarly, due to the random disperal of edges throughout the network, there is little control in deciding which vertices and how many are deemd to be important, making the average centrality measures for the random graphs much larger than those seen in the observed model. The only statistic whose value was actually close to, if not equal to, the observed value was the average degree. However, this makes sense since we fixed the probability $p$ of a link forming in the Erdős-Rényi model (which of is directly proportional to the average degree) and because we ensured that every graph generated from the Watts-Strogatz model has about the same number of edges as the observed network. Thus, we have shown through this simulation study that the Erdős-Rényi and Watts-Strogatz models are not very accurate in modeling our Facebook network for these particular network statistics. 
+Eigenvector Cen.    0.040       0.0392 $\pm$ 0.0002        0.0410 $\pm$ 3e-05      
+------------------- ----------- -------------------------- -----------------------------
 
-As `r ref("ergm1a2a", type = "table")` and `r ref("ergm2b3a", type = "table")` suggest, it appears that the random graphs generated from ERGMs provide very good estimates of average degree and average eigenvector centrality. Estimates of other network statistics, however, are quite different from what is actually observed. Not surprisingly, many of the average network statistics of the random graphs generated by the ERGMs get closer to the observed value as the number of parameters increase. This includes an overall increase in transitivity, average path length, and diameter and an overall decrease of average closeness centrality as the number of parameters increase from one to three. Average betweenness centrality, however, continue to drift farther away from the observed value as the number of parameters increase. 
+Table: Comparisons of network statistics among graphs simulated from ERGMs (2b: edges and k-stars($3$) and 3a: edges, triangles, and k-stars($3$)) and the observed network (estimate $\pm$ standard deviation) \label{tab:ergm2b3a}
 
-The fact that ERGM 2a (edges and triangles) has such similar values to ERGM 3a (edges, triangles, and k-stars of size $3$) in spite the difference in the number of parameters suggests that the k-star parameter may be redundant. This is also further suggested by the fact that ERGM 2b (edges and k-stars of size $3$) and ERGM 1a (edges) are also very similar in values as well. While this simulation study suggests that the right combinations of parameters could potentially allow for an ERGM to accurately model an observed network, we conclude that the four ERGMs used in this study do not do a very good job of modeling our Facebook network for these particular network statistics as well. 
+The first column of  `r ref("erwsdescstats", type = "table")`, `r ref("ergm1a2a", type = "table")`, and `r ref("ergm2b3a", type = "table")` shows the network statistics we are interested in. The second column of each table lists the true value of the statistis associated with the Facebook component. Each of the other cells contain an estimated network statistic and standard deviation under each model. For statistics such as average degree, we were interested in recording an average of the average values. Additionally, because each simulated graph will have approximately the same number of vertices, we, again, do not scale these values. 
+
+Based on `r ref("erwsdescstats", type = "table")`, we see that the estimated average statistics for the Erdős-Rényi and Watts-Strogatz models are very similar to each other but are drastically different from many of the observed values of our Facebook network. This means that while the graphs generated from each model look very similar to each other, they look drastically different from our observed Facebook network. This comes as no surprise since the methods used to construct graphs under both models are very likely to generate almost the same number of vertices. We even see this in our simulation study; in the fourth row of `r ref("erwsdescstats", type = "table")`, the average degree estimate for both models was within one degree of the other. Additionally, in both constructions, we are adding the edges randomly, so they are almost always spread evenly throughout the $4039$ vertices. This means that additional features of the observed network, such as large clusters or degrees with high centralities, are likely to be missed by graphs generated from these two models. This is why the transitivity, average path length, and diameter for both models are much smaller than what was actually observed. 
+
+Similarly, due to the random disperal of edges throughout the network, there is little control in deciding which vertices and how many are considered important, making the average centrality measures for the random graphs much larger than those seen in the observed model. The only statistic whose value was actually close to, if not equal to, the observed value was the average degree. However, this makes sense since we fixed the probability $p$ of a link forming in the Erdős-Rényi model (which is directly proportional to the average degree) and because we ensured that every graph generated from the Watts-Strogatz model has about the same number of edges as the observed network. Thus, we have shown through this simulation study that the Erdős-Rényi and Watts-Strogatz models are not very accurate in modeling our Facebook network for these particular network statistics. 
+
+As `r ref("ergm1a2a", type = "table")` and `r ref("ergm2b3a", type = "table")` suggest, it appears that the random graphs generated from ERGMs provide very good estimates of average degree and average eigenvector centrality. Estimates of other network statistics, however, are quite different from what is actually observed. Not surprisingly, many of the average network statistics of the random graphs generated by the ERGMs get closer to the observed value as the number of parameters increase. This includes an overall increase in transitivity, average path length, and diameter and an overall decrease of average closeness centrality as the number of parameters increase from one to three. Average betweenness centrality, however, continues to drift farther away from the observed value as the number of parameters increase. 
+
+The fact that ERGM 2a (edges and triangles) has such similar values to ERGM 3a (edges, triangles, and k-stars of size $3$) in spite the difference in the number of parameters suggests that the k-star parameter may be redundant. This is also further suggested by the fact that ERGM 2b (edges and k-stars of size $3$) and ERGM 1a (edges) are also very similar in values as well. While this simulation study suggests that the right combinations of parameters could potentially allow for an ERGM to accurately model an observed network, we conclude that the four ERGMs used in this study do not do a very good job of modeling our Facebook network for these particular network statistics. 
 

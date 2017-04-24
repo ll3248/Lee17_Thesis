@@ -31,12 +31,35 @@ This is just for testing with more citations for the bibliography at the end.  A
 
 ---
 nocite: | 
+  @barabasi_emergence_1999
+  @baumer_modern_2017
+  @beckydanning
+  @chakrabarti_graph_2006
+
   @erdos1959random
   @erdos1960evolution
   @erdHos1964strength
+  @goldenberg_survey_2010
+
+  @li_assessing_2013
   @kolaczyk_statistical_2009
   @kolaczyk_statistical_2014
-  @baumer_modern_2017
+  
+  
+  
+  @butts_introduction_2015
+  @butts2008social
+  @ergmpackagearticle
+  @ergmpackagemanual
+  @handcock_statnet:_2008
+  @hunter_ergm:_2008
+  @hunter_goodness_2008
+  @networkpackagearticle
+  @networkpackagemanual
+  @statnetpackagearticle
+  @statnetpackagemanual
+  
+  
 ...
 
 

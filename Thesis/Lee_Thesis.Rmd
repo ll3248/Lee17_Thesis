@@ -107,14 +107,19 @@ Add other chunks here for other chapters in your thesis.  Note that if you use t
 ```{r conclusion, child = 'conclusion.Rmd'}
 ```
 
+\onehalfspacing
 
-```{r revisions, child = 'revisions.Rmd'}
+```{r corrections, child = 'corrections.Rmd'}
 ```
 
 <!--
 The bib chunk below must go last in this document according to how R Markdown renders.  More info is at http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html
 -->
 
+\singlespacing
+
 ```{r bib, child = 'bibliography.Rmd'}
 ```
+
+
 
