@@ -317,7 +317,7 @@
     \vfil
     
     \vfil
-    Faculty Advisor: Amy Wagaman
+    Faculty Advisor: Amy S. Wagaman
     \vfil
     
     \vfil
