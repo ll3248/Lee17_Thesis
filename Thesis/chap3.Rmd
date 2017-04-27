@@ -47,11 +47,11 @@ We will use a subset of the Facebook network for our analysis. We fit graph mode
 
 ## Description of the Dataset 
 
-This Facebook network was compiled by Stanford University and was accessed through the Stanford Large Network Data Collection (SNAP). For more information, please see @snapnets. Our subset of the Facebook network was presented as an edge list. The social network is one giant component composed of $4039$ vertices and $88234$ edges, which represent $4039$ anonymous users and the $88234$ connections between them, respectively.[^5] This network is simple and undirected, and we believe that the network consists of established, mutual friendships. The first column of values in Table 3.1 below describes some characteristics of this network. We use the `igraph`, `sna`, `network`, `ergm`, and `statnet` packages in this study.[^6]
+This Facebook network was compiled by Stanford University and was accessed through the Stanford Large Network Data Collection (SNAP). For more information, please see @snapnets. Our subset of the Facebook network was presented as an edge list. The social network is one giant component composed of $4039$ vertices and $88234$ edges, which represent $4039$ anonymous users and the $88234$ connections between them, respectively.[^6] This network is simple and undirected, and we believe that the network consists of established, mutual friendships. The first column of values in Table 3.1 below describes some characteristics of this network. We use the `igraph`, `sna`, `network`, `ergm`, and `statnet` packages in `R` and `R-Studio` for this study.[^7]
 
-[^5]: Some of our network statistics that we calculated in R did not match those shown in the SNAP website. For example, we calculated the diameter and transitivity of this Facebook component to be $17$ and $0.617$, respectively. However, the SNAP website reports the diameter and "average clustering coefficient" to be $8$ and $0.6055$, respectively. However, other values, such as vertex and edge count, as well as the number of triangles, are equal. While SNAP's algorithm used to calculate their network statistics is unclear, for the purposes of this simulation study, we will be using the values that we calculated from the Facebook component to compare with those generated from our graph models. 
+[^6]: Some of our network statistics that we calculated in `R` did not match those shown in the SNAP website. For example, we calculated the diameter and transitivity of this Facebook component to be $17$ and $0.617$, respectively. However, the SNAP website reports the diameter and "average clustering coefficient" to be $8$ and $0.6055$, respectively. However, other values, such as vertex and edge count, as well as the number of triangles, are equal. While SNAP's algorithm used to calculate their network statistics is unclear, for the purposes of this simulation study, we will be using the values that we calculated from the Facebook component to compare with those generated from our graph models. 
 
-[^6]: See @igraphpackage, @butts2008social, @networkpackagemanual, @networkpackagearticle, @ergmpackagemanual, @ergmpackagearticle, @statnetpackagemanual, @statnetpackagearticle, and @intergraphpackagemanual for more details about these packages.
+[^7]: See @igraphpackage, @butts2008social, @networkpackagemanual, @networkpackagearticle, @ergmpackagemanual, @ergmpackagearticle,  @handcock_statnet:_2008, @statnetpackagemanual, @statnetpackagearticle, and @intergraphpackagemanual for more details about these packages.
 
 ```{r loadfbdata, message = FALSE, echo = FALSE, eval = TRUE}
 setwd("~/STAT495-Lee/LeeThesis/data")
@@ -126,7 +126,7 @@ p = ecount(fbel)/choose(vcount(fbel), 2)
 
 for (i in 1:numsim) {
   # n = number of vertices, p = probability of a link
-  #p is caluclated as number of edges over number of possible edges
+  #p is calculated as number of edges over number of possible edges
   #p is then (4039 choose 2) as calculated above 
   #igraph object
   g.er.fbel <- erdos.renyi.game(n = vcount(fbel), p)
@@ -185,7 +185,7 @@ sd(g.er.fbel.avgeigveccen) #0.02240826
 
 ### Using the Watts-Strogatz Model
 
-Recall that the Watts-Strogatz model takes in the following parameters: the number of vertices $N_{V}$, the number of starting neighbors $r$, and the probability of an edge to be rewired $p$. However, instead of rewiring our edges with a fixed probability, we will instead randomly add edges until we have approximately the same number as our observed network. To do this, we start with a lattice with $4039$ vertices and assign a number of edges to the vertices equal to the smallest degree seen in our Facebook network (which we find to be $1$). This is our starting number of neighbors for each vertex. In this situation, $p = 0$. We then randomly add edges equal to the difference between the our starting lattice and the observed network. That is, we add $88234 - 4039 = 84195$ edges to our lattice. Finally, we simplify our simulated graph to eliminate multi-edges and loops.  Since there are $4039 \choose 2$ edges to choose from, intuitively, we can see that having many multi-edges or loops will be infrequent. This makes up one simulated graph from the model. 
+Recall that the Watts-Strogatz model takes in the following parameters: the number of vertices $N_{V}$, the number of starting neighbors $r$, and the probability of an edge to be rewired or the probability for some shortcut to be added $p$. However, instead of using a fixed probability, we will instead randomly add edges until we have approximately the same number as our observed network. So, in this situation, $p = 0$. We start with a circular model with $4039$ vertices and assign a number of edges to the vertices equal to the smallest degree seen in our Facebook network (which we find to be $1$). This is our starting number of neighbors for each vertex. We then randomly add edges equal to the difference between the our starting model and the observed network. That is, we add in $88234 - 4039 = 84195$ edges. Finally, we simplify our simulated graph to eliminate multi-edges and loops.  Since there are $4039 \choose 2$ edges to choose from, intuitively, we can see that having many multi-edges or loops will be infrequent. This makes up one simulated graph from the model. 
 
 ```{r wattsstrogatzsim, eval = FALSE, echo = FALSE}
 set.seed(499)
@@ -272,11 +272,11 @@ sd(g.ws.fbel.avgeigveccen) #0.02269783
 
 ### Using ERGMs
 
-We consider four different ERGMs--which we label as ERGM 1a, ERGM 2a, ERGM 2b, and ERGM 3a. ERGM 1a takes in only the most basic parameter: edges. In Chapter 2, we have already shown its relationship to the Erdős-Rényi model. ERGM 2a and 2b both take in two parameters: edges and triangles for 2a, and edges and k-stars (of size 3) for 2b. Lastly, ERGM 3a, takes in all three parameters: edges, triangles, and k-stars (of size 3). Similar to linear regression, adding in more parameters will allow the ERGM to fit more closely to the observed network but at the cost of greater complexity. We do not consider models that only consist of just the triangle parameter or just the k-star parameter. This is because information about k-stars and triangles are based on some knowledge about edges anyway. After fitting ERGMs with the desired parameters (via maximum likelihood or MCMC), we begin simulating random graphs from each model. For each random graph, we calculate the networks statistics of interest to us. 
+We consider four different ERGMs--which we label as ERGM 1a, ERGM 2a, ERGM 2b, and ERGM 3a. ERGM 1a takes in only the most basic parameter: edges. In Chapter 2, we have already shown its relationship to the Erdős-Rényi model. ERGM 2a and 2b both take in two parameters: edges and triangles for 2a, and edges and k-stars (of size $3$) for 2b. Lastly, ERGM 3a, takes in all three parameters: edges, triangles, and k-stars (of size $3$). Similar to linear regression, adding in more parameters will allow the ERGM to fit more closely to the observed network but at the cost of greater complexity. We do not consider models that only consist of just the triangle parameter or just the k-star parameter. This is because information about k-stars and triangles are based on some knowledge about edges anyway. After fitting ERGMs with the desired parameters (via maximum likelihood or MCMC), we begin simulating random graphs from each model. 
 
 ```{r ergmmods, eval = FALSE, echo = FALSE}
 # needs an object of class network
-# uses `fbg`, a `network` object
+# uses `fbg`, a network object
 
 ## one parameter: edges
 # this should be the same as Erdos-Renyi
@@ -355,7 +355,7 @@ sd(g.ergm1a.fbg.sim.avgeigveccen) #0.0008307558
 set.seed(499)
 
 # model 2a
-# WARNINGS: takes time (20 iterations)
+# WARNING: takes time (20 iterations)
 g.ergm2a.fbg <- ergm(fbg ~ edges + triangle)
 
 numsim = 1000
@@ -425,7 +425,7 @@ sd(g.ergm2a.fbg.sim.avgeigveccen) #3.577786e-05
 
 
 ## two parameters: edges and k-stars
-# WARNINGS: takes time (18 iterations)
+# WARNING: takes time (18 iterations)
 # set the seed for reproducible analysis 
 set.seed(499)
 
@@ -445,7 +445,7 @@ g.ergm2b.fbg.sim.avgclocen <- rep(NA, numsim)
 g.ergm2b.fbg.sim.avgeigveccen <- rep(NA, numsim)
 
 for (i in 1:numsim) {
-  #simulate graphs from ergms model one at a time
+  #simulate graphs from ergm model one at a time
   #convert to igraph object
   g.ergm.fbg.sim.convert <- asIgraph(simulate(g.ergm2b.fbg, nsim = 1))
   
@@ -499,6 +499,7 @@ sd(g.ergm2b.fbg.sim.avgeigveccen) #0.0002047637
 
 
 ## three parameters: edges and triangles and k-stars
+# WARNING: takes time (20 iterations)
 # set the seed for reproducible analysis 
 set.seed(499)
 
@@ -518,7 +519,7 @@ g.ergm3a.fbg.sim.avgclocen <- rep(NA, numsim)
 g.ergm3a.fbg.sim.avgeigveccen <- rep(NA, numsim)
 
 for (i in 1:numsim) {
-  #simulate graphs from ergms model one at a time
+  #simulate graphs from ergm model one at a time
   #convert to igraph object
   g.ergm.fbg.sim.convert <- asIgraph(simulate(g.ergm3a.fbg, nsim = 1))
   
@@ -634,11 +635,11 @@ Eigenvector Cen.    0.040       0.0392 $\pm$ 0.0002        0.0410 $\pm$ 3e-05
 
 Table: Comparisons of network statistics among graphs simulated from ERGMs (2b: edges and k-stars($3$) and 3a: edges, triangles, and k-stars($3$)) and the observed network (estimate $\pm$ standard deviation) \label{tab:ergm2b3a}
 
-The first column of  `r ref("erwsdescstats", type = "table")`, `r ref("ergm1a2a", type = "table")`, and `r ref("ergm2b3a", type = "table")` shows the network statistics we are interested in. The second column of each table lists the true value of the statistis associated with the Facebook component. Each of the other cells contain an estimated network statistic and standard deviation under each model. For statistics such as average degree, we were interested in recording an average of the average values. Additionally, because each simulated graph will have approximately the same number of vertices, we, again, do not scale these values. 
+The first column of  `r ref("erwsdescstats", type = "table")`, `r ref("ergm1a2a", type = "table")`, and `r ref("ergm2b3a", type = "table")` shows the network statistics we are interested in. The second column of each table lists the true value of the statistics associated with the Facebook component. Each of the other cells contain an estimated network statistic and standard deviation under each model. For statistics such as average degree, we were interested in recording an average of the average values. Additionally, because each simulated graph will have approximately the same number of vertices, we, again, do not scale these values. 
 
 Based on `r ref("erwsdescstats", type = "table")`, we see that the estimated average statistics for the Erdős-Rényi and Watts-Strogatz models are very similar to each other but are drastically different from many of the observed values of our Facebook network. This means that while the graphs generated from each model look very similar to each other, they look drastically different from our observed Facebook network. This comes as no surprise since the methods used to construct graphs under both models are very likely to generate almost the same number of vertices. We even see this in our simulation study; in the fourth row of `r ref("erwsdescstats", type = "table")`, the average degree estimate for both models was within one degree of the other. Additionally, in both constructions, we are adding the edges randomly, so they are almost always spread evenly throughout the $4039$ vertices. This means that additional features of the observed network, such as large clusters or degrees with high centralities, are likely to be missed by graphs generated from these two models. This is why the transitivity, average path length, and diameter for both models are much smaller than what was actually observed. 
 
-Similarly, due to the random disperal of edges throughout the network, there is little control in deciding which vertices and how many are considered important, making the average centrality measures for the random graphs much larger than those seen in the observed model. The only statistic whose value was actually close to, if not equal to, the observed value was the average degree. However, this makes sense since we fixed the probability $p$ of a link forming in the Erdős-Rényi model (which is directly proportional to the average degree) and because we ensured that every graph generated from the Watts-Strogatz model has about the same number of edges as the observed network. Thus, we have shown through this simulation study that the Erdős-Rényi and Watts-Strogatz models are not very accurate in modeling our Facebook network for these particular network statistics. 
+Similarly, due to the random dispersal of edges throughout the network, there is little control in deciding which vertices and how many are considered important, making the average centrality measures for the random graphs much larger than those seen in the observed model. The only statistic whose value was actually close to, if not equal to, the observed value was the average degree. However, this makes sense since we fixed the probability $p$ of a link forming in the Erdős-Rényi model (which is directly proportional to the average degree) and because we ensured that every graph generated from the Watts-Strogatz model has about the same number of edges as the observed network. Thus, we have shown through this simulation study that the Erdős-Rényi and Watts-Strogatz models are not very accurate in modeling our Facebook network for these particular network statistics. 
 
 As `r ref("ergm1a2a", type = "table")` and `r ref("ergm2b3a", type = "table")` suggest, it appears that the random graphs generated from ERGMs provide very good estimates of average degree and average eigenvector centrality. Estimates of other network statistics, however, are quite different from what is actually observed. Not surprisingly, many of the average network statistics of the random graphs generated by the ERGMs get closer to the observed value as the number of parameters increase. This includes an overall increase in transitivity, average path length, and diameter and an overall decrease of average closeness centrality as the number of parameters increase from one to three. Average betweenness centrality, however, continues to drift farther away from the observed value as the number of parameters increase. 
 
